@@ -59,8 +59,18 @@ def test_cost_estimator_illiquid_impact():
 def test_cost_estimator_trade_list():
     est = CostEstimator()
     trades = [
-        {"trade_value_inr": 50_000, "asset_class": "indian_equity", "avg_daily_volume_inr": 5_000_000, "is_buy": True},
-        {"trade_value_inr": 30_000, "asset_class": "indian_fixed_income", "avg_daily_volume_inr": 2_000_000, "is_buy": False},
+        {
+            "trade_value_inr": 50_000,
+            "asset_class": "indian_equity",
+            "avg_daily_volume_inr": 5_000_000,
+            "is_buy": True,
+        },
+        {
+            "trade_value_inr": 30_000,
+            "asset_class": "indian_fixed_income",
+            "avg_daily_volume_inr": 2_000_000,
+            "is_buy": False,
+        },
     ]
     result = est.estimate_trade_list(trades, portfolio_value_inr=500_000)
     assert result["total_cost_inr"] > 0
@@ -98,11 +108,17 @@ def test_liquidity_scorer_single_day_small_trade():
 
 def test_liquidity_scorer_batch():
     scorer = LiquidityScorer()
-    master = pd.DataFrame([
-        {"security_id": f"IEQ{i:03d}", "asset_class": "indian_equity",
-         "avg_daily_volume_inr": 1_000_000 * (i + 1), "bid_ask_spread_bps": 10.0}
-        for i in range(10)
-    ])
+    master = pd.DataFrame(
+        [
+            {
+                "security_id": f"IEQ{i:03d}",
+                "asset_class": "indian_equity",
+                "avg_daily_volume_inr": 1_000_000 * (i + 1),
+                "bid_ask_spread_bps": 10.0,
+            }
+            for i in range(10)
+        ]
+    )
     df = scorer.score_batch(master)
     assert len(df) == 10
     assert "liquidity_score" in df.columns
@@ -139,7 +155,8 @@ def test_constraint_manager_sector_violation():
     post_weights = np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08])
     trade_weights = np.zeros(6)
     violations = cm.check_post_trade(
-        post_weights, trade_weights,
+        post_weights,
+        trade_weights,
         sector_weights={"financials": 0.40},  # exceeds 35% limit
     )
     assert any("financials" in v.constraint_name for v in violations)
@@ -152,20 +169,35 @@ def test_constraint_manager_sector_violation():
 )
 def test_trade_list_generator():
     from src.optimisation.portfolio_optimiser import PortfolioOptimiser, OptimisationResult
+
     current = np.array([0.45, 0.15, 0.15, 0.10, 0.07, 0.08])
     target = np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08])
 
     opt = PortfolioOptimiser()
     result = opt.optimise(current, target)
 
-    master = pd.DataFrame([
-        {"security_id": f"IEQ{i:03d}", "asset_class": ["indian_equity", "international_equity",
-          "indian_fixed_income", "international_fixed_income", "alternatives", "cash"][i],
-         "avg_daily_volume_inr": 5_000_000, "current_price_inr": 100.0,
-         "bid_ask_spread_bps": 10.0, "exit_load_pct": 0.0, "is_esg_compliant": True,
-         "sector": "financials"}
-        for i in range(6)
-    ])
+    master = pd.DataFrame(
+        [
+            {
+                "security_id": f"IEQ{i:03d}",
+                "asset_class": [
+                    "indian_equity",
+                    "international_equity",
+                    "indian_fixed_income",
+                    "international_fixed_income",
+                    "alternatives",
+                    "cash",
+                ][i],
+                "avg_daily_volume_inr": 5_000_000,
+                "current_price_inr": 100.0,
+                "bid_ask_spread_bps": 10.0,
+                "exit_load_pct": 0.0,
+                "is_esg_compliant": True,
+                "sector": "financials",
+            }
+            for i in range(6)
+        ]
+    )
 
     gen = TradeListGenerator()
     trades = gen.generate("WP000001", result, 1_000_000, master)

@@ -12,12 +12,12 @@ import pandas as pd
 class LiquidityScore:
     security_id: str
     asset_class: str
-    score: float              # 0-100 (100 = most liquid)
+    score: float  # 0-100 (100 = most liquid)
     avg_daily_volume_inr: float
     bid_ask_spread_bps: float
     market_impact_bps_per_pct: float
-    max_single_day_trade_inr: float   # 10% of ADV
-    recommended_days: int             # days needed to execute trade
+    max_single_day_trade_inr: float  # 10% of ADV
+    recommended_days: int  # days needed to execute trade
 
 
 class LiquidityScorer:
@@ -26,7 +26,7 @@ class LiquidityScorer:
     Follows market microstructure best practices for Indian markets.
     """
 
-    MAX_PARTICIPATION_RATE = 0.10    # max 10% of average daily volume per day
+    MAX_PARTICIPATION_RATE = 0.10  # max 10% of average daily volume per day
 
     def score_security(
         self,
@@ -42,7 +42,7 @@ class LiquidityScorer:
         # Spread component (tighter = better)
         spread_score = max(0, 50 * (1 - bid_ask_spread_bps / 100))
 
-        composite = (0.6 * volume_score + 0.4 * spread_score)
+        composite = 0.6 * volume_score + 0.4 * spread_score
 
         # Market impact per 1% participation
         vol_pct = 0.25 if "equity" in asset_class else 0.05
@@ -71,12 +71,14 @@ class LiquidityScorer:
                 avg_daily_volume_inr=float(row["avg_daily_volume_inr"]),
                 bid_ask_spread_bps=float(row["bid_ask_spread_bps"]),
             )
-            records.append({
-                "security_id": score.security_id,
-                "liquidity_score": score.score,
-                "max_daily_trade_inr": score.max_single_day_trade_inr,
-                "impact_bps_per_pct": score.market_impact_bps_per_pct,
-            })
+            records.append(
+                {
+                    "security_id": score.security_id,
+                    "liquidity_score": score.score,
+                    "max_daily_trade_inr": score.max_single_day_trade_inr,
+                    "impact_bps_per_pct": score.market_impact_bps_per_pct,
+                }
+            )
         return pd.DataFrame(records)
 
     def schedule_execution(

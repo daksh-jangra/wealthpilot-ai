@@ -9,7 +9,6 @@ from src.explainability.advisor_explainer import AdvisorExplainer
 from src.explainability.compliance_explainer import ComplianceExplainer
 from src.explainability.explanation_generator import ExplanationGenerator, ExplanationOutput
 
-
 SAMPLE_FEATURES = {
     "max_drift_pct": 6.5,
     "sum_abs_drift_pct": 12.0,
@@ -26,6 +25,7 @@ SAMPLE_SHAP_ARRAY = np.array([0.15, 0.08, 0.03, 0.12, -0.02, 0.01, -0.05, 0.02])
 
 
 # ── CounterfactualGenerator ──────────────────────────────────────────────────
+
 
 def test_counterfactual_rebalance_to_hold():
     gen = CounterfactualGenerator()
@@ -60,7 +60,9 @@ def test_counterfactual_key_feature_is_top_shap():
 def test_counterfactual_natural_language_contains_feature():
     gen = CounterfactualGenerator()
     cf = gen.generate("WP000004", SAMPLE_FEATURE_ARRAY, SAMPLE_SHAP_ARRAY, decision="rebalance")
-    assert "equity allocation drift" in cf.natural_language or "drift" in cf.natural_language.lower()
+    assert (
+        "equity allocation drift" in cf.natural_language or "drift" in cf.natural_language.lower()
+    )
 
 
 def test_counterfactual_batch():
@@ -86,6 +88,7 @@ def test_counterfactual_days_since_rebalance_unit():
 
 
 # ── AdvisorExplainer ─────────────────────────────────────────────────────────
+
 
 def _mock_generator() -> ExplanationGenerator:
     gen = MagicMock(spec=ExplanationGenerator)
@@ -119,6 +122,7 @@ def test_advisor_explainer_dashboard_widget():
 
 
 # ── ComplianceExplainer ───────────────────────────────────────────────────────
+
 
 def test_compliance_explainer_generates_output():
     gen = _mock_generator()
@@ -160,15 +164,19 @@ def test_compliance_explainer_sebi_ref_regulatory_trigger():
     with patch("src.explainability.compliance_explainer.SHAPIntegration"):
         explainer = ComplianceExplainer(gen)
         # Access the private method directly
-        refs = explainer._get_sebi_refs({"trigger_type": "regulatory_change", "constraint_checks": {}})
+        refs = explainer._get_sebi_refs(
+            {"trigger_type": "regulatory_change", "constraint_checks": {}}
+        )
         assert any("SEBI" in r for r in refs)
 
 
 # ── SHAPIntegration (integration test, skipped if shap not installed) ─────────
 
+
 def _shap_available() -> bool:
     try:
         from src.explainability.shap_integration import SHAP_AVAILABLE
+
         return SHAP_AVAILABLE
     except Exception:
         return False
@@ -178,6 +186,7 @@ def _lime_available() -> bool:
     try:
         from src.explainability.lime_integration import LIME_AVAILABLE
         from src.explainability.shap_integration import SHAP_AVAILABLE
+
         return LIME_AVAILABLE and SHAP_AVAILABLE
     except Exception:
         return False
@@ -186,6 +195,7 @@ def _lime_available() -> bool:
 @pytest.mark.skipif(not _shap_available(), reason="shap/xgboost not available")
 def test_shap_integration_explain():
     from src.explainability.shap_integration import SHAPIntegration
+
     shap_int = SHAPIntegration()
     exp = shap_int.explain("WP000001", SAMPLE_FEATURES)
     assert exp.portfolio_id == "WP000001"
@@ -198,6 +208,7 @@ def test_shap_integration_explain():
 @pytest.mark.skipif(not _shap_available(), reason="shap/xgboost not available")
 def test_shap_format_compliance():
     from src.explainability.shap_integration import SHAPIntegration
+
     shap_int = SHAPIntegration()
     exp = shap_int.explain("WP000001", SAMPLE_FEATURES)
     text = shap_int.format_for_compliance(exp)
@@ -208,6 +219,7 @@ def test_shap_format_compliance():
 @pytest.mark.skipif(not _shap_available(), reason="shap/xgboost not available")
 def test_surrogate_model_trainer_generates_data():
     from src.explainability.shap_integration import SurrogateModelTrainer, SHAP_AVAILABLE
+
     if not SHAP_AVAILABLE:
         pytest.skip("xgboost not available")
     trainer = SurrogateModelTrainer()
@@ -219,9 +231,11 @@ def test_surrogate_model_trainer_generates_data():
 
 # ── LIMEIntegration ──────────────────────────────────────────────────────────
 
+
 @pytest.mark.skipif(not _lime_available(), reason="lime not available")
 def test_lime_integration_explain():
     from src.explainability.lime_integration import LIMEIntegration
+
     lime_int = LIMEIntegration()
     exp = lime_int.explain("WP000001", SAMPLE_FEATURES, num_features=5)
     assert exp.portfolio_id == "WP000001"
@@ -233,6 +247,7 @@ def test_lime_integration_explain():
 @pytest.mark.skipif(not _lime_available(), reason="lime not available")
 def test_lime_integration_batch():
     from src.explainability.lime_integration import LIMEIntegration
+
     lime_int = LIMEIntegration()
     results = lime_int.explain_batch(["WP000001", "WP000002"], [SAMPLE_FEATURES, SAMPLE_FEATURES])
     assert len(results) == 2

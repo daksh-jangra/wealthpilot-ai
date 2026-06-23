@@ -15,9 +15,12 @@ def market_returns():
     n_days = 50
     returns = rng.normal(0, 0.01, size=(n_days, 6))
     cols = [
-        "indian_equity", "international_equity",
-        "indian_fixed_income", "international_fixed_income",
-        "alternatives", "cash",
+        "indian_equity",
+        "international_equity",
+        "indian_fixed_income",
+        "international_fixed_income",
+        "alternatives",
+        "cash",
     ]
     dates = pd.bdate_range(start="2024-04-01", periods=n_days, freq="B")
     return pd.DataFrame(returns, index=dates, columns=cols)
@@ -93,10 +96,10 @@ def test_performance_comparison(engine, balanced_weights):
 def test_all_risk_categories(engine):
     categories = [
         ("ultra_conservative", [0.10, 0.05, 0.45, 0.15, 0.10, 0.15]),
-        ("conservative",       [0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
-        ("balanced",           [0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
-        ("aggressive",         [0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
-        ("ultra_aggressive",   [0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
+        ("conservative", [0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
+        ("balanced", [0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
+        ("aggressive", [0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
+        ("ultra_aggressive", [0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
     ]
     for cat, weights in categories:
         result = engine.run(f"TEST_{cat}", cat, np.array(weights), 1_000_000, "agent")

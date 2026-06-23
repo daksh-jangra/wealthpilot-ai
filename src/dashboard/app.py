@@ -9,6 +9,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
 # Lazy-load heavy modules
 @st.cache_resource(show_spinner=False)
 def load_data():
@@ -16,6 +17,7 @@ def load_data():
     import pandas as pd
     import sys
     import os
+
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
     from src.data.portfolio_generator import PortfolioGenerator

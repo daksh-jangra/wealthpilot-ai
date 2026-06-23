@@ -34,7 +34,9 @@ class RegulatoryChangeTrigger(TriggerEvaluator):
 
     def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
         regulatory_events: list[dict] = context.get("regulatory_events", [])
-        affected = [e for e in regulatory_events if portfolio_id in e.get("affected_portfolios", [])]
+        affected = [
+            e for e in regulatory_events if portfolio_id in e.get("affected_portfolios", [])
+        ]
         if not affected:
             return None
         event = affected[0]

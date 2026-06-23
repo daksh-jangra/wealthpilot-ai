@@ -32,32 +32,32 @@ class TriggerPriority(str, Enum):
 
 
 TRIGGER_PRIORITY_MAP: dict[TriggerType, TriggerPriority] = {
-    TriggerType.THRESHOLD_ASSET_CLASS:   TriggerPriority.HIGH,
-    TriggerType.THRESHOLD_FACTOR:        TriggerPriority.MEDIUM,
+    TriggerType.THRESHOLD_ASSET_CLASS: TriggerPriority.HIGH,
+    TriggerType.THRESHOLD_FACTOR: TriggerPriority.MEDIUM,
     TriggerType.THRESHOLD_CONCENTRATION: TriggerPriority.CRITICAL,
-    TriggerType.CALENDAR_MONTHLY:        TriggerPriority.LOW,
-    TriggerType.CALENDAR_QUARTERLY:      TriggerPriority.MEDIUM,
-    TriggerType.CALENDAR_ANNUAL:         TriggerPriority.MEDIUM,
-    TriggerType.EVENT_MARKET_CRASH:      TriggerPriority.CRITICAL,
-    TriggerType.EVENT_REGULATORY:        TriggerPriority.CRITICAL,
-    TriggerType.EVENT_CLIENT_LIFE:       TriggerPriority.HIGH,
-    TriggerType.EVENT_CORPORATE_ACTION:  TriggerPriority.HIGH,
-    TriggerType.EVENT_TAX_HARVESTING:    TriggerPriority.MEDIUM,
-    TriggerType.EVENT_CASH_FLOW:         TriggerPriority.LOW,
+    TriggerType.CALENDAR_MONTHLY: TriggerPriority.LOW,
+    TriggerType.CALENDAR_QUARTERLY: TriggerPriority.MEDIUM,
+    TriggerType.CALENDAR_ANNUAL: TriggerPriority.MEDIUM,
+    TriggerType.EVENT_MARKET_CRASH: TriggerPriority.CRITICAL,
+    TriggerType.EVENT_REGULATORY: TriggerPriority.CRITICAL,
+    TriggerType.EVENT_CLIENT_LIFE: TriggerPriority.HIGH,
+    TriggerType.EVENT_CORPORATE_ACTION: TriggerPriority.HIGH,
+    TriggerType.EVENT_TAX_HARVESTING: TriggerPriority.MEDIUM,
+    TriggerType.EVENT_CASH_FLOW: TriggerPriority.LOW,
 }
 
 RESPONSE_TIMELINE_MAP: dict[TriggerPriority, str] = {
     TriggerPriority.CRITICAL: "immediate",
-    TriggerPriority.HIGH:     "within_1_session",
-    TriggerPriority.MEDIUM:   "within_3_sessions",
-    TriggerPriority.LOW:      "within_5_sessions",
+    TriggerPriority.HIGH: "within_1_session",
+    TriggerPriority.MEDIUM: "within_3_sessions",
+    TriggerPriority.LOW: "within_5_sessions",
 }
 
 PRIORITY_ORDER = {
     TriggerPriority.CRITICAL: 0,
-    TriggerPriority.HIGH:     1,
-    TriggerPriority.MEDIUM:   2,
-    TriggerPriority.LOW:      3,
+    TriggerPriority.HIGH: 1,
+    TriggerPriority.MEDIUM: 2,
+    TriggerPriority.LOW: 3,
 }
 
 

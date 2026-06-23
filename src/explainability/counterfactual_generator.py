@@ -12,7 +12,7 @@ from src.explainability.shap_integration import FEATURE_NAMES
 @dataclass
 class Counterfactual:
     portfolio_id: str
-    original_decision: str      # "rebalance" or "hold"
+    original_decision: str  # "rebalance" or "hold"
     flipped_decision: str
     key_feature: str
     current_value: float

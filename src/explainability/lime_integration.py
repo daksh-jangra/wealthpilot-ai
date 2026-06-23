@@ -10,6 +10,7 @@ import pandas as pd
 try:
     import lime
     import lime.lime_tabular
+
     LIME_AVAILABLE = True
 except Exception:
     LIME_AVAILABLE = False
@@ -21,8 +22,8 @@ from src.explainability.shap_integration import FEATURE_NAMES, SurrogateModelTra
 class LIMEExplanation:
     portfolio_id: str
     prediction: float
-    top_features: list[dict]    # [{feature, value, weight, direction}]
-    local_model_score: float    # fidelity of local linear model
+    top_features: list[dict]  # [{feature, value, weight, direction}]
+    local_model_score: float  # fidelity of local linear model
     explanation_text: str
 
 
@@ -71,11 +72,13 @@ class LIMEIntegration:
 
         top_features = []
         for feat_str, weight in exp.as_list(label=1):
-            top_features.append({
-                "feature": feat_str,
-                "weight": round(float(weight), 4),
-                "direction": "increases_rebalancing" if weight > 0 else "decreases_rebalancing",
-            })
+            top_features.append(
+                {
+                    "feature": feat_str,
+                    "weight": round(float(weight), 4),
+                    "direction": "increases_rebalancing" if weight > 0 else "decreases_rebalancing",
+                }
+            )
 
         score = float(exp.score) if hasattr(exp, "score") else 0.85
         explanation_text = self._format_explanation(top_features, prediction)
@@ -99,7 +102,4 @@ class LIMEIntegration:
     def explain_batch(
         self, portfolio_ids: list[str], features_list: list[dict]
     ) -> list[LIMEExplanation]:
-        return [
-            self.explain(pid, feat)
-            for pid, feat in zip(portfolio_ids, features_list)
-        ]
+        return [self.explain(pid, feat) for pid, feat in zip(portfolio_ids, features_list)]

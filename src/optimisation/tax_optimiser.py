@@ -8,11 +8,10 @@ from typing import Optional
 import pandas as pd
 import numpy as np
 
-
-TAX_RATE_LTCG_EQUITY = 0.125    # 12.5% post-2024 budget (grandfathering pre-2018)
-TAX_RATE_STCG_EQUITY = 0.20    # 20% post-2024 budget
-TAX_RATE_LTCG_DEBT = 0.125     # post-2023 (indexation removed for most)
-TAX_RATE_STCG_DEBT = None      # added to income slab — use investor's marginal rate
+TAX_RATE_LTCG_EQUITY = 0.125  # 12.5% post-2024 budget (grandfathering pre-2018)
+TAX_RATE_STCG_EQUITY = 0.20  # 20% post-2024 budget
+TAX_RATE_LTCG_DEBT = 0.125  # post-2023 (indexation removed for most)
+TAX_RATE_STCG_DEBT = None  # added to income slab — use investor's marginal rate
 LTCG_EQUITY_EXEMPT_LIMIT = 125_000  # INR 1.25 lakh LTCG exempt
 HOLDING_PERIOD_EQUITY_DAYS = 365
 HOLDING_PERIOD_DEBT_DAYS = 36 * 30  # 3 years (pre-2023 rule; now moot for most)
@@ -110,19 +109,23 @@ class TaxLotManager:
             cost = sell_qty * lot["cost_per_unit_inr"]
             pnl = sell_value - cost
             is_lt = bool(lot["is_long_term"])
-            tax_cost = self._compute_tax(pnl, is_lt, lot.get("asset_class", "indian_equity"), tax_bracket)
+            tax_cost = self._compute_tax(
+                pnl, is_lt, lot.get("asset_class", "indian_equity"), tax_bracket
+            )
 
-            selected.append(TaxLotSale(
-                security_id=security_id,
-                asset_class=str(lot.get("asset_class", "indian_equity")),
-                quantity=round(sell_qty, 4),
-                cost_basis_inr=round(cost, 2),
-                current_price_inr=current_price_inr,
-                acquisition_date=lot["acquisition_date"],
-                realized_pnl_inr=round(pnl, 2),
-                is_long_term=is_lt,
-                tax_cost_inr=round(tax_cost, 2),
-            ))
+            selected.append(
+                TaxLotSale(
+                    security_id=security_id,
+                    asset_class=str(lot.get("asset_class", "indian_equity")),
+                    quantity=round(sell_qty, 4),
+                    cost_basis_inr=round(cost, 2),
+                    current_price_inr=current_price_inr,
+                    acquisition_date=lot["acquisition_date"],
+                    realized_pnl_inr=round(pnl, 2),
+                    is_long_term=is_lt,
+                    tax_cost_inr=round(tax_cost, 2),
+                )
+            )
             remaining_value -= sell_value
 
         return selected
@@ -131,7 +134,9 @@ class TaxLotManager:
         pnl = current_price - lot["cost_per_unit_inr"]
         return self._compute_tax(pnl, bool(lot["is_long_term"]), "indian_equity", bracket)
 
-    def _compute_tax(self, pnl: float, is_long_term: bool, asset_class: str, bracket: float) -> float:
+    def _compute_tax(
+        self, pnl: float, is_long_term: bool, asset_class: str, bracket: float
+    ) -> float:
         if pnl <= 0:
             return 0.0
         if "equity" in asset_class:
@@ -184,15 +189,17 @@ class TaxOptimiser:
             if substitute and self._recent_purchase(portfolio_id, substitute, days=WASH_SALE_DAYS):
                 substitute = None
 
-            opportunities.append(HarvestOpportunity(
-                portfolio_id=portfolio_id,
-                security_id=security_id,
-                asset_class=asset_class,
-                unrealized_loss_inr=round(abs(unrealized_pnl), 2),
-                quantity=round(total_qty, 4),
-                substitute_security_id=substitute,
-                estimated_tax_saving_inr=round(tax_saving, 2),
-            ))
+            opportunities.append(
+                HarvestOpportunity(
+                    portfolio_id=portfolio_id,
+                    security_id=security_id,
+                    asset_class=asset_class,
+                    unrealized_loss_inr=round(abs(unrealized_pnl), 2),
+                    quantity=round(total_qty, 4),
+                    substitute_security_id=substitute,
+                    estimated_tax_saving_inr=round(tax_saving, 2),
+                )
+            )
 
         opportunities.sort(key=lambda o: o.estimated_tax_saving_inr, reverse=True)
         return opportunities

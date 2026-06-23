@@ -9,11 +9,13 @@ from src.backtesting.performance_analyser import PerformanceAnalyser
 from src.backtesting.scenario_runner import ScenarioRunner
 from src.backtesting.strategy_comparator import StrategyComparator
 
-
 ASSET_CLASSES = [
-    "indian_equity", "international_equity",
-    "indian_fixed_income", "international_fixed_income",
-    "alternatives", "cash",
+    "indian_equity",
+    "international_equity",
+    "indian_fixed_income",
+    "international_fixed_income",
+    "alternatives",
+    "cash",
 ]
 BALANCED_WEIGHTS = np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08])
 
@@ -51,6 +53,7 @@ def _make_portfolios_with_intl(n: int = 5) -> list[dict]:
 
 
 # ── ScenarioRunner ────────────────────────────────────────────────────────────
+
 
 def test_scenario_1_normal_drift():
     market = _make_market_returns()
@@ -114,6 +117,7 @@ def test_scenario_does_not_mutate_original_returns():
 
 # ── StrategyComparator ────────────────────────────────────────────────────────
 
+
 def test_strategy_comparator_compare_all():
     market = _make_market_returns()
     engine = BacktestEngine(market)
@@ -159,6 +163,7 @@ def test_strategy_comparator_batch():
 
 # ── PerformanceAnalyser ───────────────────────────────────────────────────────
 
+
 def test_performance_analyser_summarise():
     market = _make_market_returns()
     engine = BacktestEngine(market)
@@ -174,8 +179,10 @@ def test_performance_analyser_summarise():
 def test_performance_analyser_compare_dataframe():
     market = _make_market_returns()
     engine = BacktestEngine(market)
-    results = [engine.run("WP000001", "balanced", BALANCED_WEIGHTS, 1_000_000, s)
-               for s in ["agent", "legacy_quarterly"]]
+    results = [
+        engine.run("WP000001", "balanced", BALANCED_WEIGHTS, 1_000_000, s)
+        for s in ["agent", "legacy_quarterly"]
+    ]
     analyser = PerformanceAnalyser()
     df = analyser.compare(results)
     assert "agent" in df.index
@@ -196,12 +203,20 @@ def test_performance_analyser_rolling_metrics():
 def test_performance_analyser_improvement_scorecard_all_better():
     analyser = PerformanceAnalyser()
     agent = {
-        "sharpe_ratio": 1.5, "max_drawdown_pct": 5.0, "tracking_error_pct": 1.0,
-        "turnover_pct": 10.0, "total_cost_inr": 5000, "annualised_return_pct": 12.0,
+        "sharpe_ratio": 1.5,
+        "max_drawdown_pct": 5.0,
+        "tracking_error_pct": 1.0,
+        "turnover_pct": 10.0,
+        "total_cost_inr": 5000,
+        "annualised_return_pct": 12.0,
     }
     legacy = {
-        "sharpe_ratio": 1.0, "max_drawdown_pct": 8.0, "tracking_error_pct": 2.0,
-        "turnover_pct": 20.0, "total_cost_inr": 10000, "annualised_return_pct": 10.0,
+        "sharpe_ratio": 1.0,
+        "max_drawdown_pct": 8.0,
+        "tracking_error_pct": 2.0,
+        "turnover_pct": 20.0,
+        "total_cost_inr": 10000,
+        "annualised_return_pct": 10.0,
     }
     sc = analyser.improvement_scorecard(agent, legacy)
     assert sc["agent_wins"] == 6

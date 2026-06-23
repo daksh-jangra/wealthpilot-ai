@@ -25,6 +25,7 @@ try:
     from rich.table import Table
     from rich.panel import Panel
     from rich.progress import track
+
     RICH = True
 except ImportError:
     RICH = False
@@ -48,11 +49,13 @@ def _header(title: str) -> None:
 
 # ── Demo ─────────────────────────────────────────────────────────────────────
 
+
 def run_demo() -> None:
     _header("WealthPilot AI — Demo Rebalancing Cycle")
 
     _print("\n[1/7] Generating synthetic market data (252 trading days)...", "cyan")
     from src.data.market_data_simulator import MarketDataSimulator
+
     sim = MarketDataSimulator(seed=42)
     returns = sim.simulate_returns()
     vix = sim.get_vix_series()
@@ -63,6 +66,7 @@ def run_demo() -> None:
     t0 = time.time()
     from src.data.client_profile_generator import ClientProfileGenerator
     from src.data.portfolio_generator import PortfolioGenerator
+
     clients = ClientProfileGenerator(seed=42).generate_all()
     gen = PortfolioGenerator(seed=42)
     weights = gen.generate_current_allocations(clients)
@@ -72,6 +76,7 @@ def run_demo() -> None:
 
     _print("\n[3/7] Running drift scan across all 50,000 portfolios...", "cyan")
     from src.monitoring.drift_monitor import DriftMonitor
+
     monitor = DriftMonitor()
     t0 = time.time()
     summary = monitor.run_scan(weights, clients["risk_category"])
@@ -89,10 +94,13 @@ def run_demo() -> None:
         return
     drift_result = top[0]
     _print(f"  Portfolio: {drift_result.portfolio_id}", "bold")
-    _print(f"  Max drift: {drift_result.max_drift*100:.1f}%  |  Severity: {drift_result.severity.name}")
+    _print(
+        f"  Max drift: {drift_result.max_drift*100:.1f}%  |  Severity: {drift_result.severity.name}"
+    )
 
     from src.triggers.trigger_consolidator import TriggerConsolidator
     from src.monitoring.drift_calculator import DriftResult as DriftRes
+
     consolidator = TriggerConsolidator()
     trigger = consolidator.evaluate_portfolio(drift_result)
     _print(f"  Primary trigger: {trigger.primary_trigger.trigger_type.value}", "yellow")
@@ -100,6 +108,7 @@ def run_demo() -> None:
 
     _print("\n[5/7] Optimising portfolio with CVXPY / OSQP...", "cyan")
     from src.optimisation.portfolio_optimiser import PortfolioOptimiser
+
     optimiser = PortfolioOptimiser()
     t0 = time.time()
     opt = optimiser.optimise(
@@ -108,11 +117,14 @@ def run_demo() -> None:
         portfolio_value_inr=float(values.iloc[0]),
     )
     _print(f"  Status: {opt.status}  ({time.time()-t0:.2f}s)", "green")
-    _print(f"  Tracking error before: {drift_result.rmsd*100:.2f}%  →  after: {opt.tracking_error*100:.2f}%")
+    _print(
+        f"  Tracking error before: {drift_result.rmsd*100:.2f}%  →  after: {opt.tracking_error*100:.2f}%"
+    )
     _print(f"  Turnover: {opt.turnover*100:.1f}%")
 
     _print("\n[6/7] Generating 3-tier explanations (no API key = fallback mode)...", "cyan")
     from src.explainability.explanation_generator import ExplanationGenerator
+
     explainer = ExplanationGenerator(model=os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6"))
     meta = {
         "portfolio_id": drift_result.portfolio_id,
@@ -134,21 +146,36 @@ def run_demo() -> None:
     _print("\n[7/7] Running quick backtest (agent vs legacy quarterly)...", "cyan")
     from src.backtesting.backtest_engine import BacktestEngine
     from src.backtesting.performance_analyser import PerformanceAnalyser
+
     market = sim.simulate_returns()
     market.index = pd.date_range("2024-01-02", periods=len(market), freq="B")
     engine = BacktestEngine(market)
-    agent_r = engine.run(drift_result.portfolio_id, drift_result.risk_category,
-                         drift_result.current_weights, 1_000_000, "agent")
-    legacy_r = engine.run(drift_result.portfolio_id, drift_result.risk_category,
-                          drift_result.current_weights, 1_000_000, "legacy_quarterly")
+    agent_r = engine.run(
+        drift_result.portfolio_id,
+        drift_result.risk_category,
+        drift_result.current_weights,
+        1_000_000,
+        "agent",
+    )
+    legacy_r = engine.run(
+        drift_result.portfolio_id,
+        drift_result.risk_category,
+        drift_result.current_weights,
+        1_000_000,
+        "legacy_quarterly",
+    )
     analyser = PerformanceAnalyser()
     sc = analyser.improvement_scorecard(analyser.summarise(agent_r), analyser.summarise(legacy_r))
-    _print(f"  Agent wins on {sc['agent_wins']}/6 metrics  |  Target met: {'YES' if sc['target_met'] else 'NO'}", "green")
+    _print(
+        f"  Agent wins on {sc['agent_wins']}/6 metrics  |  Target met: {'YES' if sc['target_met'] else 'NO'}",
+        "green",
+    )
 
     _print("\nDemo complete.", "bold green")
 
 
 # ── Scan ─────────────────────────────────────────────────────────────────────
+
 
 def run_scan() -> None:
     _header("WealthPilot AI — Full Portfolio Drift Scan")
@@ -182,6 +209,7 @@ def run_scan() -> None:
 
 
 # ── Rebalance ────────────────────────────────────────────────────────────────
+
 
 def run_rebalance(portfolio_id: str) -> None:
     _header(f"Rebalancing Portfolio: {portfolio_id}")
@@ -225,6 +253,7 @@ def run_rebalance(portfolio_id: str) -> None:
 
 # ── Backtest ─────────────────────────────────────────────────────────────────
 
+
 def run_backtest() -> None:
     _header("WealthPilot AI — Strategy Comparison Backtest")
     from src.data.market_data_simulator import MarketDataSimulator
@@ -258,11 +287,14 @@ def run_backtest() -> None:
             )
         console.print(table)
     sc = result["improvement_scorecard"]
-    _print(f"\nAgent beats legacy on {sc['agent_wins']}/6 metrics. Target met: {'YES' if sc['target_met'] else 'NO'}",
-           "green" if sc["target_met"] else "yellow")
+    _print(
+        f"\nAgent beats legacy on {sc['agent_wins']}/6 metrics. Target met: {'YES' if sc['target_met'] else 'NO'}",
+        "green" if sc["target_met"] else "yellow",
+    )
 
 
 # ── Dashboard ────────────────────────────────────────────────────────────────
+
 
 def run_dashboard() -> None:
     _print("Launching Streamlit dashboard...", "cyan")
@@ -270,6 +302,7 @@ def run_dashboard() -> None:
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -282,7 +315,9 @@ def main() -> None:
     sub.add_parser("scan", help="Scan all 50,000 portfolios for drift")
 
     p_reb = sub.add_parser("rebalance", help="Rebalance a specific portfolio")
-    p_reb.add_argument("--id", required=True, dest="portfolio_id", help="Portfolio ID (e.g. WP000001)")
+    p_reb.add_argument(
+        "--id", required=True, dest="portfolio_id", help="Portfolio ID (e.g. WP000001)"
+    )
 
     sub.add_parser("backtest", help="Run agent vs legacy strategy comparison")
     sub.add_parser("dashboard", help="Launch the Streamlit monitoring dashboard")

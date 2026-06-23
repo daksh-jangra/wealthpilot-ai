@@ -21,13 +21,19 @@ class ClientExplainer:
 
     def explain(self, decision_metadata: dict) -> ExplanationOutput:
         trigger_type = decision_metadata.get("trigger_type", "threshold")
-        trigger_class = "threshold" if "threshold" in trigger_type else (
-            "calendar" if "calendar" in trigger_type else "event"
+        trigger_class = (
+            "threshold"
+            if "threshold" in trigger_type
+            else ("calendar" if "calendar" in trigger_type else "event")
         )
-        decision_metadata["analogy"] = self.ANALOGIES.get(trigger_class, self.ANALOGIES["threshold"])
+        decision_metadata["analogy"] = self.ANALOGIES.get(
+            trigger_class, self.ANALOGIES["threshold"]
+        )
         return self.generator.generate("client", decision_metadata)
 
-    def format_email(self, explanation: ExplanationOutput, client_name: str = "Valued Client") -> str:
+    def format_email(
+        self, explanation: ExplanationOutput, client_name: str = "Valued Client"
+    ) -> str:
         return (
             f"Dear {client_name},\n\n"
             f"{explanation.narrative}\n\n"

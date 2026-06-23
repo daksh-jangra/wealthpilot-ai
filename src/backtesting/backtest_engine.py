@@ -15,18 +15,18 @@ from src.optimisation.portfolio_optimiser import PortfolioOptimiser
 
 TARGET_ALLOCATIONS = {
     "ultra_conservative": np.array([0.10, 0.05, 0.45, 0.15, 0.10, 0.15]),
-    "conservative":       np.array([0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
-    "balanced":           np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
-    "aggressive":         np.array([0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
-    "ultra_aggressive":   np.array([0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
+    "conservative": np.array([0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
+    "balanced": np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
+    "aggressive": np.array([0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
+    "ultra_aggressive": np.array([0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
 }
 
 DRIFT_BANDS = {
     "ultra_conservative": 0.020,
-    "conservative":       0.025,
-    "balanced":           0.030,
-    "aggressive":         0.040,
-    "ultra_aggressive":   0.050,
+    "conservative": 0.025,
+    "balanced": 0.030,
+    "aggressive": 0.040,
+    "ultra_aggressive": 0.050,
 }
 
 
@@ -66,7 +66,7 @@ class BacktestEngine:
     Supports agent, legacy (quarterly), threshold-only, and buy-and-hold strategies.
     """
 
-    TRANSACTION_COST_PCT = 0.0015   # 15 bps round-trip
+    TRANSACTION_COST_PCT = 0.0015  # 15 bps round-trip
 
     def __init__(
         self,
@@ -145,14 +145,16 @@ class BacktestEngine:
                 trigger = strategy
                 last_rebalance_date = dt if isinstance(dt, date) else dt.date()
 
-            states.append(DailyPortfolioState(
-                date=dt if isinstance(dt, date) else dt.date(),
-                weights=new_weights.copy(),
-                value_inr=round(new_value, 2),
-                rebalanced_today=rebalanced,
-                cost_inr=round(cost, 2),
-                trigger_type=trigger,
-            ))
+            states.append(
+                DailyPortfolioState(
+                    date=dt if isinstance(dt, date) else dt.date(),
+                    weights=new_weights.copy(),
+                    value_inr=round(new_value, 2),
+                    rebalanced_today=rebalanced,
+                    cost_inr=round(cost, 2),
+                    trigger_type=trigger,
+                )
+            )
 
             weights = new_weights
             value = new_value
@@ -211,9 +213,7 @@ class BacktestEngine:
 
         excess_returns = daily_returns - self.rf_daily
         if result.annualised_volatility > 0:
-            result.sharpe_ratio = float(
-                excess_returns.mean() / daily_returns.std() * np.sqrt(252)
-            )
+            result.sharpe_ratio = float(excess_returns.mean() / daily_returns.std() * np.sqrt(252))
 
         # Max drawdown
         cum = (1 + daily_returns).cumprod()

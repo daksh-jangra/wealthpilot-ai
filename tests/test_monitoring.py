@@ -9,9 +9,12 @@ from src.monitoring.threshold_manager import ThresholdManager, BASE_DRIFT_BANDS
 from src.monitoring.drift_calculator import DriftCalculator, DriftSeverity
 
 ASSET_CLASSES = [
-    "indian_equity", "international_equity",
-    "indian_fixed_income", "international_fixed_income",
-    "alternatives", "cash",
+    "indian_equity",
+    "international_equity",
+    "indian_fixed_income",
+    "international_fixed_income",
+    "alternatives",
+    "cash",
 ]
 
 
@@ -89,10 +92,14 @@ def test_drift_monitor_scan_returns_results():
 def test_drift_monitor_get_critical_portfolios():
     monitor = DriftMonitor()
     # Create portfolios with extreme drift
-    w = pd.DataFrame([
-        [0.80, 0.10, 0.05, 0.02, 0.02, 0.01],  # extreme equity overweight
-        [0.35, 0.15, 0.20, 0.10, 0.12, 0.08],  # at target
-    ], columns=ASSET_CLASSES, index=["P0000", "P0001"])
+    w = pd.DataFrame(
+        [
+            [0.80, 0.10, 0.05, 0.02, 0.02, 0.01],  # extreme equity overweight
+            [0.35, 0.15, 0.20, 0.10, 0.12, 0.08],  # at target
+        ],
+        columns=ASSET_CLASSES,
+        index=["P0000", "P0001"],
+    )
     cats = pd.Series(["balanced", "balanced"], index=w.index)
     monitor.run_scan(w, cats)
     critical = monitor.get_critical_portfolios()

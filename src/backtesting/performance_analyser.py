@@ -52,8 +52,8 @@ class PerformanceAnalyser:
         if min_len < 10:
             return {"error": "Insufficient data for significance test"}
 
-        agent_r = np.diff(agent_returns[:min_len]) / agent_returns[:min_len - 1]
-        legacy_r = np.diff(legacy_returns[:min_len]) / legacy_returns[:min_len - 1]
+        agent_r = np.diff(agent_returns[:min_len]) / agent_returns[: min_len - 1]
+        legacy_r = np.diff(legacy_returns[:min_len]) / legacy_returns[: min_len - 1]
 
         t_stat, p_value = stats.ttest_rel(agent_r, legacy_r)
         return {
@@ -102,16 +102,18 @@ class PerformanceAnalyser:
             "details": comparison,
         }
 
-    def rolling_metrics(
-        self, result: BacktestResult, window: int = 63
-    ) -> pd.DataFrame:
+    def rolling_metrics(self, result: BacktestResult, window: int = 63) -> pd.DataFrame:
         """Compute rolling 63-day (3-month) Sharpe and volatility."""
         values = [s.value_inr for s in result.daily_states]
         returns = pd.Series(values).pct_change().dropna()
-        rolling_sharpe = returns.rolling(window).mean() / returns.rolling(window).std() * np.sqrt(252)
+        rolling_sharpe = (
+            returns.rolling(window).mean() / returns.rolling(window).std() * np.sqrt(252)
+        )
         rolling_vol = returns.rolling(window).std() * np.sqrt(252)
-        return pd.DataFrame({
-            "date": [s.date for s in result.daily_states[window + 1:]],
-            "rolling_sharpe": rolling_sharpe.values[window:],
-            "rolling_volatility": rolling_vol.values[window:],
-        })
+        return pd.DataFrame(
+            {
+                "date": [s.date for s in result.daily_states[window + 1 :]],
+                "rolling_sharpe": rolling_sharpe.values[window:],
+                "rolling_volatility": rolling_vol.values[window:],
+            }
+        )

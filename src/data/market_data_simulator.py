@@ -12,41 +12,58 @@ from typing import Optional
 class MarketParameters:
     """Calibrated parameters for Indian market simulation."""
 
-    asset_classes: list[str] = field(default_factory=lambda: [
-        "indian_equity", "international_equity",
-        "indian_fixed_income", "international_fixed_income",
-        "alternatives", "cash",
-    ])
+    asset_classes: list[str] = field(
+        default_factory=lambda: [
+            "indian_equity",
+            "international_equity",
+            "indian_fixed_income",
+            "international_fixed_income",
+            "alternatives",
+            "cash",
+        ]
+    )
 
     # Annualised expected returns
-    expected_returns: np.ndarray = field(default_factory=lambda: np.array([
-        0.14,   # indian_equity
-        0.10,   # international_equity
-        0.07,   # indian_fixed_income
-        0.05,   # international_fixed_income
-        0.09,   # alternatives (gold, REITs)
-        0.065,  # cash/liquid
-    ]))
+    expected_returns: np.ndarray = field(
+        default_factory=lambda: np.array(
+            [
+                0.14,  # indian_equity
+                0.10,  # international_equity
+                0.07,  # indian_fixed_income
+                0.05,  # international_fixed_income
+                0.09,  # alternatives (gold, REITs)
+                0.065,  # cash/liquid
+            ]
+        )
+    )
 
     # Annualised volatilities
-    volatilities: np.ndarray = field(default_factory=lambda: np.array([
-        0.20,   # indian_equity
-        0.15,   # international_equity
-        0.04,   # indian_fixed_income
-        0.05,   # international_fixed_income
-        0.12,   # alternatives
-        0.005,  # cash
-    ]))
+    volatilities: np.ndarray = field(
+        default_factory=lambda: np.array(
+            [
+                0.20,  # indian_equity
+                0.15,  # international_equity
+                0.04,  # indian_fixed_income
+                0.05,  # international_fixed_income
+                0.12,  # alternatives
+                0.005,  # cash
+            ]
+        )
+    )
 
     # Correlation matrix (calibrated to NSE/BSE/global data)
-    correlation_matrix: np.ndarray = field(default_factory=lambda: np.array([
-        [1.00,  0.60,  -0.10,  -0.05,  0.30,  0.00],
-        [0.60,  1.00,  -0.05,  -0.02,  0.25,  0.00],
-        [-0.10, -0.05,  1.00,   0.70, -0.15,  0.10],
-        [-0.05, -0.02,  0.70,   1.00, -0.10,  0.05],
-        [0.30,  0.25, -0.15,  -0.10,  1.00,  0.00],
-        [0.00,  0.00,  0.10,   0.05,  0.00,  1.00],
-    ]))
+    correlation_matrix: np.ndarray = field(
+        default_factory=lambda: np.array(
+            [
+                [1.00, 0.60, -0.10, -0.05, 0.30, 0.00],
+                [0.60, 1.00, -0.05, -0.02, 0.25, 0.00],
+                [-0.10, -0.05, 1.00, 0.70, -0.15, 0.10],
+                [-0.05, -0.02, 0.70, 1.00, -0.10, 0.05],
+                [0.30, 0.25, -0.15, -0.10, 1.00, 0.00],
+                [0.00, 0.00, 0.10, 0.05, 0.00, 1.00],
+            ]
+        )
+    )
 
     trading_days: int = 252
     degrees_of_freedom: int = 6  # Student-t for fat tails
@@ -126,7 +143,7 @@ class MarketDataSimulator:
         # Spike during crash
         crash_day = 60
         if days > crash_day + 5:
-            vix[crash_day:crash_day + 5] *= 2.5
+            vix[crash_day : crash_day + 5] *= 2.5
 
         dates = pd.bdate_range(start="2024-04-01", periods=days, freq="B")
         return pd.Series(vix, index=dates, name="VIX")

@@ -12,9 +12,9 @@ from typing import Optional
 class ClientProfile:
     client_id: str
     risk_category: str
-    risk_score: int           # 1-5
-    tax_bracket: float        # 0.0, 0.20, or 0.30
-    monthly_sip_inr: float    # recurring inflow
+    risk_score: int  # 1-5
+    tax_bracket: float  # 0.0, 0.20, or 0.30
+    monthly_sip_inr: float  # recurring inflow
     planned_withdrawal_inr: float  # upcoming cash need
     restricted_securities: list[str]
     esg_screen: bool
@@ -35,8 +35,14 @@ class ClientProfileGenerator:
     }
 
     SECTORS = [
-        "financials", "technology", "energy", "healthcare",
-        "consumer", "industrials", "materials", "utilities",
+        "financials",
+        "technology",
+        "energy",
+        "healthcare",
+        "consumer",
+        "industrials",
+        "materials",
+        "utilities",
     ]
 
     def __init__(self, seed: int = 42):
@@ -55,16 +61,21 @@ class ClientProfileGenerator:
         return df
 
     def _generate_one(self, idx: int, category: str, risk_score_center: int) -> ClientProfile:
-        score = int(np.clip(
-            self.rng.integers(max(1, risk_score_center - 1), min(5, risk_score_center + 1) + 1),
-            1, 5,
-        ))
+        score = int(
+            np.clip(
+                self.rng.integers(max(1, risk_score_center - 1), min(5, risk_score_center + 1) + 1),
+                1,
+                5,
+            )
+        )
 
         # Tax bracket distribution (30% high-income, 50% mid, 20% zero)
         tax_bracket = self.rng.choice([0.0, 0.20, 0.30], p=[0.20, 0.50, 0.30])
 
         # SIP amounts (INR): 5k to 1 lakh/month
-        sip = float(self.rng.choice([5000, 10000, 25000, 50000, 100000], p=[0.25, 0.35, 0.25, 0.12, 0.03]))
+        sip = float(
+            self.rng.choice([5000, 10000, 25000, 50000, 100000], p=[0.25, 0.35, 0.25, 0.12, 0.03])
+        )
 
         # Planned withdrawal: 60% have none, rest have 1-20L
         withdrawal = 0.0
@@ -73,7 +84,10 @@ class ClientProfileGenerator:
 
         # Restricted securities: 0-3 random ISIN-like codes
         n_restricted = int(self.rng.integers(0, 4))
-        restricted = [f"INE{self.rng.integers(100, 999):03d}A01{self.rng.integers(10, 99):02d}" for _ in range(n_restricted)]
+        restricted = [
+            f"INE{self.rng.integers(100, 999):03d}A01{self.rng.integers(10, 99):02d}"
+            for _ in range(n_restricted)
+        ]
 
         esg = bool(self.rng.random() < 0.15)
 

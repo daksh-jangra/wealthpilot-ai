@@ -69,7 +69,9 @@ class DriftMonitor:
         if elapsed > 30.0:
             logger.warning(f"Scan took {elapsed:.1f}s — exceeds 30s target")
         else:
-            logger.success(f"Scan complete in {elapsed:.2f}s: {len(actionable)} portfolios need attention")
+            logger.success(
+                f"Scan complete in {elapsed:.2f}s: {len(actionable)} portfolios need attention"
+            )
 
         return summary
 

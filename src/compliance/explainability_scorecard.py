@@ -10,12 +10,12 @@ import re
 class ExplainabilityScore:
     explanation_id: str
     audience: str
-    accuracy_score: float        # 0-1: numbers in narrative match metadata
-    completeness_score: float    # 0-1: all required sections present
-    readability_score: float     # 0-1: grade level appropriate
-    actionability_score: float   # 0-1: client knows what to do
-    regulatory_score: float      # 0-1: meets compliance requirements
-    overall_score: float         # weighted average
+    accuracy_score: float  # 0-1: numbers in narrative match metadata
+    completeness_score: float  # 0-1: all required sections present
+    readability_score: float  # 0-1: grade level appropriate
+    actionability_score: float  # 0-1: client knows what to do
+    regulatory_score: float  # 0-1: meets compliance requirements
+    overall_score: float  # weighted average
     passed: bool
 
     WEIGHTS = {

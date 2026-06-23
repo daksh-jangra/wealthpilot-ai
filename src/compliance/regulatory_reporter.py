@@ -27,22 +27,24 @@ class RegulatoryReporter:
         rows = []
         for d in decision_log:
             for trade in d.get("trades", []):
-                rows.append({
-                    "decision_id": d.get("decision_id"),
-                    "portfolio_id": d.get("decision_metadata", {}).get("portfolio_id"),
-                    "timestamp": d.get("decision_metadata", {}).get("timestamp"),
-                    "trigger_type": d.get("decision_metadata", {}).get("trigger_type"),
-                    "risk_category": d.get("decision_metadata", {}).get("risk_category"),
-                    "trade_id": trade.get("trade_id"),
-                    "security_id": trade.get("security_id"),
-                    "asset_class": trade.get("asset_class"),
-                    "direction": trade.get("direction"),
-                    "quantity": trade.get("quantity"),
-                    "trade_value_inr": trade.get("trade_value_inr"),
-                    "estimated_cost_inr": trade.get("estimated_cost_inr"),
-                    "execution_strategy": trade.get("execution_strategy"),
-                    "decision_rationale": d.get("decision_metadata", {}).get("trigger_type"),
-                })
+                rows.append(
+                    {
+                        "decision_id": d.get("decision_id"),
+                        "portfolio_id": d.get("decision_metadata", {}).get("portfolio_id"),
+                        "timestamp": d.get("decision_metadata", {}).get("timestamp"),
+                        "trigger_type": d.get("decision_metadata", {}).get("trigger_type"),
+                        "risk_category": d.get("decision_metadata", {}).get("risk_category"),
+                        "trade_id": trade.get("trade_id"),
+                        "security_id": trade.get("security_id"),
+                        "asset_class": trade.get("asset_class"),
+                        "direction": trade.get("direction"),
+                        "quantity": trade.get("quantity"),
+                        "trade_value_inr": trade.get("trade_value_inr"),
+                        "estimated_cost_inr": trade.get("estimated_cost_inr"),
+                        "execution_strategy": trade.get("execution_strategy"),
+                        "decision_rationale": d.get("decision_metadata", {}).get("trigger_type"),
+                    }
+                )
         df = pd.DataFrame(rows) if rows else pd.DataFrame()
         return df
 
@@ -51,22 +53,24 @@ class RegulatoryReporter:
         records = []
         for d in decision_log:
             meta = d.get("decision_metadata", {})
-            records.append({
-                "decision_id": d.get("decision_id"),
-                "portfolio_id": meta.get("portfolio_id"),
-                "risk_category": meta.get("risk_category"),
-                "risk_score": meta.get("risk_score"),
-                "trigger": meta.get("trigger_type"),
-                "drift_pct": meta.get("max_drift_pct"),
-                "suitability_rationale": (
-                    f"Rebalancing restores portfolio to client's stated risk category "
-                    f"'{meta.get('risk_category')}' as per onboarding risk questionnaire. "
-                    f"Drift of {meta.get('max_drift_pct', 0):.1f}% exceeded the "
-                    f"category threshold, creating a risk profile inconsistent with client objectives."
-                ),
-                "constraint_violations": meta.get("constraint_checks", {}).get("hard", 0),
-                "sebi_compliant": meta.get("constraint_checks", {}).get("hard", 0) == 0,
-            })
+            records.append(
+                {
+                    "decision_id": d.get("decision_id"),
+                    "portfolio_id": meta.get("portfolio_id"),
+                    "risk_category": meta.get("risk_category"),
+                    "risk_score": meta.get("risk_score"),
+                    "trigger": meta.get("trigger_type"),
+                    "drift_pct": meta.get("max_drift_pct"),
+                    "suitability_rationale": (
+                        f"Rebalancing restores portfolio to client's stated risk category "
+                        f"'{meta.get('risk_category')}' as per onboarding risk questionnaire. "
+                        f"Drift of {meta.get('max_drift_pct', 0):.1f}% exceeded the "
+                        f"category threshold, creating a risk profile inconsistent with client objectives."
+                    ),
+                    "constraint_violations": meta.get("constraint_checks", {}).get("hard", 0),
+                    "sebi_compliant": meta.get("constraint_checks", {}).get("hard", 0) == 0,
+                }
+            )
         return records
 
     def generate_algo_audit_trail(self, decision: dict) -> str:
@@ -124,12 +128,16 @@ class RegulatoryReporter:
             hard_violations = meta.get("constraint_checks", {}).get("hard", 0)
             overrides = len(meta.get("override_history", []))
             if hard_violations > 0 or overrides > 0:
-                exceptions.append({
-                    "decision_id": d.get("decision_id"),
-                    "portfolio_id": meta.get("portfolio_id"),
-                    "timestamp": meta.get("timestamp"),
-                    "hard_violations": hard_violations,
-                    "overrides": overrides,
-                    "exception_type": "constraint_violation" if hard_violations > 0 else "advisor_override",
-                })
+                exceptions.append(
+                    {
+                        "decision_id": d.get("decision_id"),
+                        "portfolio_id": meta.get("portfolio_id"),
+                        "timestamp": meta.get("timestamp"),
+                        "hard_violations": hard_violations,
+                        "overrides": overrides,
+                        "exception_type": (
+                            "constraint_violation" if hard_violations > 0 else "advisor_override"
+                        ),
+                    }
+                )
         return pd.DataFrame(exceptions) if exceptions else pd.DataFrame()

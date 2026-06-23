@@ -3,7 +3,6 @@
 import pytest
 from src.override.escalation_manager import EscalationManager, EscalationBriefing
 
-
 SAMPLE_METADATA = {
     "trigger_type": "threshold_asset_class",
     "max_drift_pct": 7.5,
@@ -84,7 +83,9 @@ def test_escalation_resolve_nonexistent_no_error():
 
 def test_escalation_no_violations_message():
     manager = EscalationManager()
-    b = manager.create_briefing("WP000001", "DEC001", {"max_drift_pct": 5.0, "constraint_checks": {"details": []}})
+    b = manager.create_briefing(
+        "WP000001", "DEC001", {"max_drift_pct": 5.0, "constraint_checks": {"details": []}}
+    )
     assert "No constraint violations" in b.situation_summary
 
 

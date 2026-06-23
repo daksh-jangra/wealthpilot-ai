@@ -10,6 +10,7 @@ from unittest.mock import MagicMock
 # ── Data layer ──────────────────────────────────────────────────────────────────
 def test_data_generation_produces_50k_portfolios():
     from src.data.client_profile_generator import ClientProfileGenerator
+
     gen = ClientProfileGenerator(seed=42)
     profiles = gen.generate_all()
     assert len(profiles) == 50_000
@@ -19,6 +20,7 @@ def test_data_generation_produces_50k_portfolios():
 
 def test_market_data_generates_252_days():
     from src.data.market_data_simulator import MarketDataSimulator
+
     sim = MarketDataSimulator(seed=42)
     returns = sim.simulate_returns()
     assert len(returns) == 252
@@ -28,6 +30,7 @@ def test_market_data_generates_252_days():
 def test_portfolio_values_generated():
     from src.data.portfolio_generator import PortfolioGenerator
     from src.data.client_profile_generator import ClientProfileGenerator
+
     gen = PortfolioGenerator(seed=42)
     clients = ClientProfileGenerator(seed=42).generate_all()
     values = gen.generate_portfolio_values(clients)
@@ -105,6 +108,7 @@ def test_trigger_pipeline_for_drifted_portfolio():
 )
 def test_optimiser_constraint_satisfaction():
     from src.optimisation.portfolio_optimiser import PortfolioOptimiser
+
     current = np.array([0.45, 0.15, 0.15, 0.10, 0.07, 0.08])
     target = np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08])
     optimiser = PortfolioOptimiser()
@@ -124,6 +128,7 @@ def test_explanation_pipeline_with_mock_llm():
     mock_client.messages.create.return_value = mock_msg
 
     from src.explainability.explanation_generator import ExplanationGenerator
+
     gen = ExplanationGenerator(client=mock_client)
     meta = {
         "portfolio_id": "WP000001",
@@ -146,6 +151,7 @@ def test_explanation_pipeline_with_mock_llm():
 # ── Override layer ─────────────────────────────────────────────────────────────
 def test_override_audit_trail():
     from src.override.override_capture import OverrideCapture
+
     capture = OverrideCapture()
     record = capture.capture(
         decision_id="DEC00000001",
@@ -163,10 +169,32 @@ def test_override_audit_trail():
 # ── Compliance layer ──────────────────────────────────────────────────────────
 def test_bias_detector_runs_on_sample():
     from src.compliance.bias_detector import BiasDetector
+
     decision_log = [
-        {"decision_metadata": {"risk_category": "balanced", "trigger_type": "threshold", "max_drift_pct": 4.5, "vix": 18.0}},
-        {"decision_metadata": {"risk_category": "aggressive", "trigger_type": "calendar", "max_drift_pct": 5.0, "vix": 20.0}},
-        {"decision_metadata": {"risk_category": "balanced", "trigger_type": "threshold", "max_drift_pct": 3.8, "vix": 19.0}},
+        {
+            "decision_metadata": {
+                "risk_category": "balanced",
+                "trigger_type": "threshold",
+                "max_drift_pct": 4.5,
+                "vix": 18.0,
+            }
+        },
+        {
+            "decision_metadata": {
+                "risk_category": "aggressive",
+                "trigger_type": "calendar",
+                "max_drift_pct": 5.0,
+                "vix": 20.0,
+            }
+        },
+        {
+            "decision_metadata": {
+                "risk_category": "balanced",
+                "trigger_type": "threshold",
+                "max_drift_pct": 3.8,
+                "vix": 19.0,
+            }
+        },
     ]
     detector = BiasDetector()
     report = detector.full_bias_report(decision_log)

@@ -7,7 +7,6 @@ from src.explainability.explanation_generator import ExplanationGenerator, Expla
 from src.explainability.client_explainer import ClientExplainer
 from src.compliance.explainability_scorecard import ExplainabilityScorecard
 
-
 SAMPLE_METADATA = {
     "portfolio_id": "WP000001",
     "risk_category": "balanced",
@@ -29,7 +28,11 @@ SAMPLE_METADATA = {
 def mock_anthropic():
     """Mock Anthropic client to avoid API calls in tests."""
     mock_msg = MagicMock()
-    mock_msg.content = [MagicMock(text="Your portfolio has drifted 4.5% from target. We are rebalancing to restore your risk level. Cost: INR 3,500.")]
+    mock_msg.content = [
+        MagicMock(
+            text="Your portfolio has drifted 4.5% from target. We are rebalancing to restore your risk level. Cost: INR 3,500."
+        )
+    ]
     mock_client = MagicMock()
     mock_client.messages.create.return_value = mock_msg
     return mock_client

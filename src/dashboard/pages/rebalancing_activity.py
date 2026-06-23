@@ -23,18 +23,28 @@ def render(data: dict) -> None:
     # Pending approval queue
     st.subheader("Pending Advisor Approvals")
     if not results_df.empty:
-        high_priority = results_df[results_df["severity"].isin(["critical", "high"])].head(10).copy()
+        high_priority = (
+            results_df[results_df["severity"].isin(["critical", "high"])].head(10).copy()
+        )
         if not high_priority.empty:
             high_priority["approval_required"] = "Yes"
-            high_priority["response_timeline"] = high_priority["severity"].map({
-                "critical": "Immediate",
-                "high": "Within 24h",
-            })
+            high_priority["response_timeline"] = high_priority["severity"].map(
+                {
+                    "critical": "Immediate",
+                    "high": "Within 24h",
+                }
+            )
             st.dataframe(
-                high_priority[[
-                    "portfolio_id", "risk_category", "max_drift",
-                    "severity", "response_timeline", "breaching_asset_classes",
-                ]].round(4),
+                high_priority[
+                    [
+                        "portfolio_id",
+                        "risk_category",
+                        "max_drift",
+                        "severity",
+                        "response_timeline",
+                        "breaching_asset_classes",
+                    ]
+                ].round(4),
                 use_container_width=True,
                 height=250,
             )
@@ -80,20 +90,34 @@ def render(data: dict) -> None:
 def _mock_decision_log() -> list[dict]:
     """Generate mock decision entries for dashboard display."""
     import random
+
     rng = random.Random(42)
     entries = []
     statuses = ["completed", "pending_approval", "in_progress", "overridden"]
-    triggers = ["threshold_asset_class", "threshold_concentration", "calendar_quarterly", "event_market_crash"]
-    categories = ["balanced", "aggressive", "conservative", "ultra_conservative", "ultra_aggressive"]
+    triggers = [
+        "threshold_asset_class",
+        "threshold_concentration",
+        "calendar_quarterly",
+        "event_market_crash",
+    ]
+    categories = [
+        "balanced",
+        "aggressive",
+        "conservative",
+        "ultra_conservative",
+        "ultra_aggressive",
+    ]
     for i in range(20):
-        entries.append({
-            "Decision ID": f"DEC{i:08X}",
-            "Portfolio": f"WP{rng.randint(0, 50000):06d}",
-            "Risk Category": rng.choice(categories),
-            "Trigger": rng.choice(triggers),
-            "Max Drift": f"{rng.uniform(0.5, 8.0):.2f}%",
-            "Status": rng.choice(statuses),
-            "Cost (INR)": f"{rng.randint(500, 15000):,}",
-            "Timestamp": datetime.utcnow().isoformat()[:16],
-        })
+        entries.append(
+            {
+                "Decision ID": f"DEC{i:08X}",
+                "Portfolio": f"WP{rng.randint(0, 50000):06d}",
+                "Risk Category": rng.choice(categories),
+                "Trigger": rng.choice(triggers),
+                "Max Drift": f"{rng.uniform(0.5, 8.0):.2f}%",
+                "Status": rng.choice(statuses),
+                "Cost (INR)": f"{rng.randint(500, 15000):,}",
+                "Timestamp": datetime.utcnow().isoformat()[:16],
+            }
+        )
     return entries

@@ -23,9 +23,9 @@ class ThresholdTrigger(TriggerEvaluator):
 
         severity_map = {
             DriftSeverity.CRITICAL: TriggerType.THRESHOLD_CONCENTRATION,
-            DriftSeverity.HIGH:     TriggerType.THRESHOLD_ASSET_CLASS,
-            DriftSeverity.MEDIUM:   TriggerType.THRESHOLD_ASSET_CLASS,
-            DriftSeverity.LOW:      TriggerType.THRESHOLD_ASSET_CLASS,
+            DriftSeverity.HIGH: TriggerType.THRESHOLD_ASSET_CLASS,
+            DriftSeverity.MEDIUM: TriggerType.THRESHOLD_ASSET_CLASS,
+            DriftSeverity.LOW: TriggerType.THRESHOLD_ASSET_CLASS,
         }
         trigger_type = severity_map[drift_result.severity]
 

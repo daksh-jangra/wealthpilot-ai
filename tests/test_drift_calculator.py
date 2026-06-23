@@ -7,9 +7,12 @@ import pytest
 from src.monitoring.drift_calculator import DriftCalculator, DriftSeverity, DRIFT_BANDS
 
 ASSET_CLASSES = [
-    "indian_equity", "international_equity",
-    "indian_fixed_income", "international_fixed_income",
-    "alternatives", "cash",
+    "indian_equity",
+    "international_equity",
+    "indian_fixed_income",
+    "international_fixed_income",
+    "alternatives",
+    "cash",
 ]
 
 
@@ -65,7 +68,14 @@ def test_batch_vectorised(calculator):
     # Verify sorted (critical/high before none)
     severities = [r.severity for r in results]
     from src.monitoring.drift_calculator import SEVERITY_MULTIPLIERS
-    order_map = {DriftSeverity.CRITICAL: 0, DriftSeverity.HIGH: 1, DriftSeverity.MEDIUM: 2, DriftSeverity.LOW: 3, DriftSeverity.NONE: 4}
+
+    order_map = {
+        DriftSeverity.CRITICAL: 0,
+        DriftSeverity.HIGH: 1,
+        DriftSeverity.MEDIUM: 2,
+        DriftSeverity.LOW: 3,
+        DriftSeverity.NONE: 4,
+    }
     orders = [order_map[s] for s in severities]
     assert orders == sorted(orders)
 
@@ -82,10 +92,10 @@ def test_all_risk_categories(calculator):
     """Test each risk category processes without error."""
     categories = [
         ("ultra_conservative", [0.10, 0.05, 0.45, 0.15, 0.10, 0.15]),
-        ("conservative",       [0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
-        ("balanced",           [0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
-        ("aggressive",         [0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
-        ("ultra_aggressive",   [0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
+        ("conservative", [0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
+        ("balanced", [0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
+        ("aggressive", [0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
+        ("ultra_aggressive", [0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
     ]
     for cat, target in categories:
         w = np.array(target)
@@ -121,6 +131,7 @@ def test_priority_queue(calculator):
     queue = calculator.build_priority_queue(results)
 
     import heapq
+
     drifts = []
     while queue:
         neg_drift, _ = heapq.heappop(queue)

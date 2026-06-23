@@ -159,7 +159,11 @@ class ExplanationGenerator:
             output.complete = False
         # Verify key cost figure appears (approximate)
         cost = meta.get("total_cost_inr", 0)
-        if cost > 0 and str(int(cost // 1000)) not in output.narrative and output.audience == "client":
+        if (
+            cost > 0
+            and str(int(cost // 1000)) not in output.narrative
+            and output.audience == "client"
+        ):
             pass  # soft warning only
 
     def _fallback_narrative(self, audience: str, meta: dict) -> str:

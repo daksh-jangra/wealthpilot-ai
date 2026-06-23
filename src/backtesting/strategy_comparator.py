@@ -9,7 +9,6 @@ from loguru import logger
 from src.backtesting.backtest_engine import BacktestEngine, BacktestResult
 from src.backtesting.performance_analyser import PerformanceAnalyser
 
-
 STRATEGIES = ["agent", "legacy_quarterly", "threshold_only", "buy_and_hold"]
 
 

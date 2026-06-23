@@ -36,12 +36,14 @@ def render(data: dict) -> None:
 
     fig = go.Figure()
     for strategy, values in eq_curves.items():
-        fig.add_trace(go.Scatter(
-            x=list(range(len(values))),
-            y=values,
-            name=strategy,
-            mode="lines",
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=list(range(len(values))),
+                y=values,
+                name=strategy,
+                mode="lines",
+            )
+        )
     fig.update_layout(
         height=400,
         xaxis_title="Trading Days",
@@ -86,6 +88,7 @@ def render(data: dict) -> None:
 
 def _run_sample_backtest(market_returns) -> dict:
     from src.backtesting.backtest_engine import BacktestEngine
+
     target = np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08])
     # Slight initial drift
     initial = target + np.array([0.05, 0.02, -0.04, -0.02, 0.0, -0.01])
@@ -110,6 +113,7 @@ def _run_sample_backtest(market_returns) -> dict:
 
 def _simulate_equity_curves(market_returns) -> dict:
     from src.backtesting.backtest_engine import BacktestEngine
+
     target = np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08])
     initial = target + np.array([0.05, 0.02, -0.04, -0.02, 0.0, -0.01])
     initial = np.clip(initial, 0, 1)
@@ -126,12 +130,36 @@ def _build_scorecard(comparison: dict) -> dict:
     agent = comparison.get("agent", {})
     legacy = comparison.get("legacy_quarterly", {})
     metrics = {
-        "Sharpe": {"agent": agent.get("Sharpe", 0), "legacy": legacy.get("Sharpe", 0), "higher_better": True},
-        "Max DD": {"agent": agent.get("Max Drawdown", 0), "legacy": legacy.get("Max Drawdown", 0), "higher_better": False},
-        "Track.Err": {"agent": agent.get("Tracking Error", 0), "legacy": legacy.get("Tracking Error", 0), "higher_better": False},
-        "Cost": {"agent": agent.get("Total Cost (INR)", 0), "legacy": legacy.get("Total Cost (INR)", 0), "higher_better": False},
-        "Ann.Ret": {"agent": agent.get("Annualised Return", 0), "legacy": legacy.get("Annualised Return", 0), "higher_better": True},
-        "Volatility": {"agent": agent.get("Volatility", 0), "legacy": legacy.get("Volatility", 0), "higher_better": False},
+        "Sharpe": {
+            "agent": agent.get("Sharpe", 0),
+            "legacy": legacy.get("Sharpe", 0),
+            "higher_better": True,
+        },
+        "Max DD": {
+            "agent": agent.get("Max Drawdown", 0),
+            "legacy": legacy.get("Max Drawdown", 0),
+            "higher_better": False,
+        },
+        "Track.Err": {
+            "agent": agent.get("Tracking Error", 0),
+            "legacy": legacy.get("Tracking Error", 0),
+            "higher_better": False,
+        },
+        "Cost": {
+            "agent": agent.get("Total Cost (INR)", 0),
+            "legacy": legacy.get("Total Cost (INR)", 0),
+            "higher_better": False,
+        },
+        "Ann.Ret": {
+            "agent": agent.get("Annualised Return", 0),
+            "legacy": legacy.get("Annualised Return", 0),
+            "higher_better": True,
+        },
+        "Volatility": {
+            "agent": agent.get("Volatility", 0),
+            "legacy": legacy.get("Volatility", 0),
+            "higher_better": False,
+        },
     }
     for m in metrics.values():
         if m["higher_better"]:

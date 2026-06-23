@@ -32,8 +32,8 @@ class BiasDetector:
             "significant_bias": bool(p_value < 0.05),
             "interpretation": (
                 "Significant bias in rebalancing frequency across risk categories"
-                if p_value < 0.05 else
-                "No significant bias detected"
+                if p_value < 0.05
+                else "No significant bias detected"
             ),
         }
 
@@ -77,7 +77,9 @@ class BiasDetector:
             ),
         }
 
-    def full_bias_report(self, decision_log: list[dict], trade_log: Optional[list[dict]] = None) -> dict:
+    def full_bias_report(
+        self, decision_log: list[dict], trade_log: Optional[list[dict]] = None
+    ) -> dict:
         return {
             "category_bias": self.detect_category_bias(decision_log),
             "security_bias": self.detect_security_bias(trade_log or []),

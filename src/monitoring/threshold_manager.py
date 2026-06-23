@@ -6,13 +6,12 @@ import yaml
 from pathlib import Path
 from typing import Optional
 
-
 BASE_DRIFT_BANDS = {
     "ultra_conservative": 0.020,
-    "conservative":       0.025,
-    "balanced":           0.030,
-    "aggressive":         0.040,
-    "ultra_aggressive":   0.050,
+    "conservative": 0.025,
+    "balanced": 0.030,
+    "aggressive": 0.040,
+    "ultra_aggressive": 0.050,
 }
 
 FACTOR_DRIFT_STD_DEFAULT = 1.5
@@ -56,10 +55,7 @@ class ThresholdManager:
 
     def get_all_bands(self, risk_categories: dict[str, str]) -> dict[str, float]:
         """Bulk-resolve drift bands for {portfolio_id: risk_category} mapping."""
-        return {
-            pid: self.get_drift_band(cat, pid)
-            for pid, cat in risk_categories.items()
-        }
+        return {pid: self.get_drift_band(cat, pid) for pid, cat in risk_categories.items()}
 
     def tighten_bands(self, factor: float = 0.80) -> None:
         """Tighten all bands (e.g., during stressed market regime)."""

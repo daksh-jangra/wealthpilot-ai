@@ -43,6 +43,7 @@ class EscalationManager:
     ) -> EscalationBriefing:
         """Create a human-readable escalation briefing."""
         import uuid
+
         trigger = decision_metadata.get("trigger_type", "unknown")
         drift = decision_metadata.get("max_drift_pct", 0)
         violations = decision_metadata.get("constraint_checks", {}).get("details", [])

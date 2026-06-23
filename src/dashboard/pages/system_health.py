@@ -31,13 +31,15 @@ def render(data: dict) -> None:
     timestamps = [datetime.utcnow() - timedelta(minutes=30 * i) for i in range(47, -1, -1)]
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=timestamps,
-        y=scan_times,
-        mode="lines+markers",
-        name="Scan Time (s)",
-        line=dict(color="#3b82f6"),
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=timestamps,
+            y=scan_times,
+            mode="lines+markers",
+            name="Scan Time (s)",
+            line=dict(color="#3b82f6"),
+        )
+    )
     fig.add_hline(y=30, line_dash="dash", line_color="red", annotation_text="30s target")
     fig.update_layout(height=300, xaxis_title="Time", yaxis_title="Seconds")
     st.plotly_chart(fig, use_container_width=True)
@@ -47,22 +49,37 @@ def render(data: dict) -> None:
     with col_a:
         # Agent throughput
         st.subheader("Agent Throughput")
-        throughput_data = pd.DataFrame({
-            "Hour": [f"{h}:00" for h in range(9, 16)],
-            "Portfolios Processed": [rng.integers(80, 150) for _ in range(7)],
-        })
-        fig2 = px.bar(throughput_data, x="Hour", y="Portfolios Processed",
-                      color_discrete_sequence=["#22c55e"])
+        throughput_data = pd.DataFrame(
+            {
+                "Hour": [f"{h}:00" for h in range(9, 16)],
+                "Portfolios Processed": [rng.integers(80, 150) for _ in range(7)],
+            }
+        )
+        fig2 = px.bar(
+            throughput_data, x="Hour", y="Portfolios Processed", color_discrete_sequence=["#22c55e"]
+        )
         fig2.update_layout(height=280)
         st.plotly_chart(fig2, use_container_width=True)
 
     with col_b:
         # Error log
         st.subheader("Error Log (Last 24h)")
-        error_data = pd.DataFrame([
-            {"Time": "09:15:03", "Component": "optimiser", "Error": "OSQP solver timeout (retried)", "Severity": "warning"},
-            {"Time": "11:42:17", "Component": "llm_api", "Error": "Rate limit — backoff applied", "Severity": "warning"},
-        ])
+        error_data = pd.DataFrame(
+            [
+                {
+                    "Time": "09:15:03",
+                    "Component": "optimiser",
+                    "Error": "OSQP solver timeout (retried)",
+                    "Severity": "warning",
+                },
+                {
+                    "Time": "11:42:17",
+                    "Component": "llm_api",
+                    "Error": "Rate limit — backoff applied",
+                    "Severity": "warning",
+                },
+            ]
+        )
         if not error_data.empty:
             st.dataframe(error_data, use_container_width=True, height=150)
         else:
@@ -73,12 +90,37 @@ def render(data: dict) -> None:
     # Agent status table
     st.subheader("Agent Status")
     agents = [
-        {"Agent": "Orchestrator", "Status": "Running", "Decisions/hr": 87, "Avg Latency (ms)": 1240},
-        {"Agent": "Portfolio Analyst", "Status": "Running", "Decisions/hr": 87, "Avg Latency (ms)": 1850},
+        {
+            "Agent": "Orchestrator",
+            "Status": "Running",
+            "Decisions/hr": 87,
+            "Avg Latency (ms)": 1240,
+        },
+        {
+            "Agent": "Portfolio Analyst",
+            "Status": "Running",
+            "Decisions/hr": 87,
+            "Avg Latency (ms)": 1850,
+        },
         {"Agent": "Risk Manager", "Status": "Running", "Decisions/hr": 87, "Avg Latency (ms)": 620},
-        {"Agent": "Tax Specialist", "Status": "Running", "Decisions/hr": 87, "Avg Latency (ms)": 480},
-        {"Agent": "Compliance Officer", "Status": "Running", "Decisions/hr": 87, "Avg Latency (ms)": 340},
-        {"Agent": "Explanation Writer", "Status": "Running", "Decisions/hr": 87, "Avg Latency (ms)": 3200},
+        {
+            "Agent": "Tax Specialist",
+            "Status": "Running",
+            "Decisions/hr": 87,
+            "Avg Latency (ms)": 480,
+        },
+        {
+            "Agent": "Compliance Officer",
+            "Status": "Running",
+            "Decisions/hr": 87,
+            "Avg Latency (ms)": 340,
+        },
+        {
+            "Agent": "Explanation Writer",
+            "Status": "Running",
+            "Decisions/hr": 87,
+            "Avg Latency (ms)": 3200,
+        },
     ]
     st.dataframe(pd.DataFrame(agents), use_container_width=True)
 

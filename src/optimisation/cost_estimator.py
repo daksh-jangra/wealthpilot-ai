@@ -9,14 +9,14 @@ import numpy as np
 @dataclass
 class CostEstimate:
     brokerage_inr: float
-    stt_inr: float            # Securities Transaction Tax
+    stt_inr: float  # Securities Transaction Tax
     stamp_duty_inr: float
     gst_on_brokerage_inr: float
     market_impact_inr: float
     total_explicit_inr: float
     total_implicit_inr: float
     total_inr: float
-    total_bps: float          # basis points of trade value
+    total_bps: float  # basis points of trade value
 
 
 class CostEstimator:
@@ -26,16 +26,16 @@ class CostEstimator:
     """
 
     # STT rates (equity delivery)
-    STT_BUY_EQUITY = 0.001        # 0.10% on buy
-    STT_SELL_EQUITY = 0.001       # 0.10% on sell
+    STT_BUY_EQUITY = 0.001  # 0.10% on buy
+    STT_SELL_EQUITY = 0.001  # 0.10% on sell
 
     # Stamp duty on buy
-    STAMP_DUTY_EQUITY_BUY = 0.00015   # 0.015%
+    STAMP_DUTY_EQUITY_BUY = 0.00015  # 0.015%
     STAMP_DUTY_DEBT_BUY = 0.00005
 
     # Brokerage (discount broker)
-    BROKERAGE_FLAT_PER_ORDER = 20.0   # INR 20 flat per order
-    MAX_BROKERAGE_PCT = 0.0025        # 0.25% cap
+    BROKERAGE_FLAT_PER_ORDER = 20.0  # INR 20 flat per order
+    MAX_BROKERAGE_PCT = 0.0025  # 0.25% cap
 
     # GST on brokerage
     GST_RATE = 0.18
@@ -69,7 +69,9 @@ class CostEstimator:
 
         # Stamp duty (buy side only)
         if is_buy:
-            stamp = abs_value * (self.STAMP_DUTY_EQUITY_BUY if is_equity else self.STAMP_DUTY_DEBT_BUY)
+            stamp = abs_value * (
+                self.STAMP_DUTY_EQUITY_BUY if is_equity else self.STAMP_DUTY_DEBT_BUY
+            )
         else:
             stamp = 0.0
 
@@ -118,7 +120,11 @@ class CostEstimator:
 
         return {
             "total_cost_inr": round(total_cost, 2),
-            "total_cost_bps": round((total_cost / portfolio_value_inr) * 10_000, 1) if portfolio_value_inr else 0,
-            "cost_as_pct_portfolio": round((total_cost / portfolio_value_inr) * 100, 3) if portfolio_value_inr else 0,
+            "total_cost_bps": (
+                round((total_cost / portfolio_value_inr) * 10_000, 1) if portfolio_value_inr else 0
+            ),
+            "cost_as_pct_portfolio": (
+                round((total_cost / portfolio_value_inr) * 100, 3) if portfolio_value_inr else 0
+            ),
             "trade_details": details,
         }

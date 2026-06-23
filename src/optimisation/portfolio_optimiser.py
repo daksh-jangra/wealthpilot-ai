@@ -8,6 +8,7 @@ import numpy as np
 
 try:
     import cvxpy as cp
+
     CVXPY_AVAILABLE = True
 except ImportError:
     CVXPY_AVAILABLE = False
@@ -17,8 +18,8 @@ from src.optimisation.constraint_manager import ConstraintManager
 
 @dataclass
 class OptimisationResult:
-    status: str                    # "optimal", "infeasible", "suboptimal"
-    trade_weights: np.ndarray      # delta weights (positive = buy, negative = sell)
+    status: str  # "optimal", "infeasible", "suboptimal"
+    trade_weights: np.ndarray  # delta weights (positive = buy, negative = sell)
     post_trade_weights: np.ndarray
     tracking_error: float
     turnover: float
@@ -72,6 +73,7 @@ class PortfolioOptimiser:
             cash_flow_fraction: net cash inflow/outflow as fraction of portfolio value
         """
         import time
+
         n = len(current_weights)
         cov = covariance_matrix if covariance_matrix is not None else np.eye(n)
         budget = turnover_budget or self.constraint_manager.turnover_budget
@@ -84,9 +86,9 @@ class PortfolioOptimiser:
         objective = cp.Minimize(cp.quad_form(diff, cov))
 
         constraints = [
-            cp.sum(w_post) == 1.0,              # budget
-            w_post >= 0,                          # long-only
-            cp.norm1(w_trade) <= budget,          # turnover
+            cp.sum(w_post) == 1.0,  # budget
+            w_post >= 0,  # long-only
+            cp.norm1(w_trade) <= budget,  # turnover
             w_post[1] <= self.constraint_manager.international_equity_limit,  # SEBI intl limit
         ]
 
@@ -118,8 +120,14 @@ class PortfolioOptimiser:
             min_trade_fraction = self.constraint_manager.min_trade_size_inr / portfolio_value_inr
             trade_w = np.where(np.abs(trade_w) >= min_trade_fraction, trade_w, 0.0)
 
-            violations = self.constraint_manager.check_post_trade(post_w, trade_w, sector_weights, issuer_weights)
-            te = float(np.sqrt(diff.value.T @ cov @ diff.value)) if diff.value is not None else float(np.sqrt((post_w - target_weights) @ cov @ (post_w - target_weights)))
+            violations = self.constraint_manager.check_post_trade(
+                post_w, trade_w, sector_weights, issuer_weights
+            )
+            te = (
+                float(np.sqrt(diff.value.T @ cov @ diff.value))
+                if diff.value is not None
+                else float(np.sqrt((post_w - target_weights) @ cov @ (post_w - target_weights)))
+            )
 
             return OptimisationResult(
                 status=problem.status,

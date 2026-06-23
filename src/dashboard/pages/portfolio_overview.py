@@ -80,7 +80,15 @@ def render(data: dict) -> None:
         critical_df = results_df[results_df["severity"].isin(["critical", "high"])].head(20)
         if not critical_df.empty:
             st.dataframe(
-                critical_df[["portfolio_id", "risk_category", "max_drift", "severity", "breaching_asset_classes"]].round(4),
+                critical_df[
+                    [
+                        "portfolio_id",
+                        "risk_category",
+                        "max_drift",
+                        "severity",
+                        "breaching_asset_classes",
+                    ]
+                ].round(4),
                 use_container_width=True,
                 height=300,
             )

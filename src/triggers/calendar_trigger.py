@@ -15,6 +15,7 @@ def _is_business_day(d: date) -> bool:
 def _next_business_day(d: date) -> date:
     while not _is_business_day(d):
         from datetime import timedelta
+
         d += timedelta(days=1)
     return d
 
@@ -50,6 +51,7 @@ class QuarterlyCalendarTrigger(TriggerEvaluator):
             return None
         first = _next_business_day(today.replace(day=1))
         from datetime import timedelta
+
         week_end = first + timedelta(days=4)
         if not (first <= today <= week_end):
             return None

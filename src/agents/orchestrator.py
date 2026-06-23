@@ -14,6 +14,7 @@ import uuid
 try:
     from crewai import Agent, Task, Crew, Process
     from langchain_anthropic import ChatAnthropic
+
     CREWAI_AVAILABLE = True
 except ImportError:
     CREWAI_AVAILABLE = False
@@ -30,13 +31,12 @@ from src.explainability.shap_integration import SHAPIntegration
 import numpy as np
 import pandas as pd
 
-
 TARGET_ALLOCATIONS = {
     "ultra_conservative": np.array([0.10, 0.05, 0.45, 0.15, 0.10, 0.15]),
-    "conservative":       np.array([0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
-    "balanced":           np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
-    "aggressive":         np.array([0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
-    "ultra_aggressive":   np.array([0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
+    "conservative": np.array([0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
+    "balanced": np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
+    "aggressive": np.array([0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
+    "ultra_aggressive": np.array([0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
 }
 
 

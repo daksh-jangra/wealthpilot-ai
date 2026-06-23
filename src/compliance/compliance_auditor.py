@@ -42,7 +42,11 @@ class ComplianceAuditor:
         """Automated metrics: accuracy proxy, completeness, readability."""
         words = explanation.split()
         word_count = len(words)
-        sentences = [s.strip() for s in explanation.replace("!", ".").replace("?", ".").split(".") if s.strip()]
+        sentences = [
+            s.strip()
+            for s in explanation.replace("!", ".").replace("?", ".").split(".")
+            if s.strip()
+        ]
         n_sentences = max(1, len(sentences))
         avg_words_per_sentence = word_count / n_sentences
 
@@ -120,7 +124,8 @@ class ComplianceAuditor:
 
         pass_rate = (
             sum(1 for s in quality_scores if s["readability_pass"]) / len(quality_scores)
-            if quality_scores else 0.0
+            if quality_scores
+            else 0.0
         )
 
         bias_analysis = self.detect_systematic_bias(decision_log)
@@ -132,11 +137,18 @@ class ComplianceAuditor:
             "sampled_decisions": len(sample),
             "explanation_quality": {
                 "avg_completeness": round(
-                    float(np.mean([s["completeness_score"] for s in quality_scores])) if quality_scores else 0.0, 2
+                    (
+                        float(np.mean([s["completeness_score"] for s in quality_scores]))
+                        if quality_scores
+                        else 0.0
+                    ),
+                    2,
                 ),
                 "pass_rate": round(pass_rate, 2),
                 "grade_level_pass_rate": round(
-                    sum(1 for s in quality_scores if s["grade_level_ok"]) / max(len(quality_scores), 1), 2
+                    sum(1 for s in quality_scores if s["grade_level_ok"])
+                    / max(len(quality_scores), 1),
+                    2,
                 ),
             },
             "bias_analysis": bias_analysis,

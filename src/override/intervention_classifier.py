@@ -8,10 +8,10 @@ from typing import Optional
 
 
 class InterventionLevel(str, Enum):
-    INFORMATIONAL = "informational"       # post-execution notification
-    ADVISORY = "advisory"                 # proceeds unless advisor objects within 4-24h
+    INFORMATIONAL = "informational"  # post-execution notification
+    ADVISORY = "advisory"  # proceeds unless advisor objects within 4-24h
     APPROVAL_REQUIRED = "approval_required"  # waits for explicit approval
-    ESCALATION = "escalation"             # needs human intervention
+    ESCALATION = "escalation"  # needs human intervention
 
 
 @dataclass
@@ -58,14 +58,21 @@ class InterventionClassifier:
                 trade_impact_pct=trade_impact_pct,
                 decision_confidence=decision_confidence,
                 reason=(
-                    "Compliance exception" if has_compliance_exception else
-                    "Client restriction override" if has_client_restriction_override else
-                    "Novel trigger type"
+                    "Compliance exception"
+                    if has_compliance_exception
+                    else (
+                        "Client restriction override"
+                        if has_client_restriction_override
+                        else "Novel trigger type"
+                    )
                 ),
             )
 
         # High impact + low confidence → approval required
-        if trade_impact_pct > self.ADVISORY_MAX_TRADE_PCT or decision_confidence < self.MIN_CONFIDENCE_ADVISORY:
+        if (
+            trade_impact_pct > self.ADVISORY_MAX_TRADE_PCT
+            or decision_confidence < self.MIN_CONFIDENCE_ADVISORY
+        ):
             return InterventionDecision(
                 level=InterventionLevel.APPROVAL_REQUIRED,
                 trade_impact_pct=trade_impact_pct,

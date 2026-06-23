@@ -40,14 +40,18 @@ def test_turnover_constraint_respected(optimiser):
     target = np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08])
     budget = 0.10
     result = optimiser.optimise(current, target, turnover_budget=budget)
-    assert result.turnover <= budget + 1e-3, f"Turnover {result.turnover:.4f} exceeds budget {budget}"
+    assert (
+        result.turnover <= budget + 1e-3
+    ), f"Turnover {result.turnover:.4f} exceeds budget {budget}"
 
 
 def test_international_equity_sebi_limit(optimiser):
     current = np.array([0.30, 0.30, 0.15, 0.05, 0.12, 0.08])
     target = np.array([0.35, 0.30, 0.20, 0.00, 0.07, 0.08])  # intl equity = 30%
     result = optimiser.optimise(current, target)
-    assert result.post_trade_weights[1] <= 0.25 + 1e-3, "International equity must not exceed SEBI 25% limit"
+    assert (
+        result.post_trade_weights[1] <= 0.25 + 1e-3
+    ), "International equity must not exceed SEBI 25% limit"
 
 
 def test_long_only_constraint(optimiser):

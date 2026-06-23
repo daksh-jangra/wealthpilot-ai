@@ -48,8 +48,14 @@ class ScenarioRunner:
         legacy_results = []
         for p in portfolios[:100]:  # sample 100 for speed
             weights = np.array(p["initial_weights"])
-            agent_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent"))
-            legacy_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"))
+            agent_results.append(
+                engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent")
+            )
+            legacy_results.append(
+                engine.run(
+                    p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"
+                )
+            )
 
         return ScenarioResult(
             scenario_name="Scenario 1: Normal Drift",
@@ -74,8 +80,14 @@ class ScenarioRunner:
         legacy_results = []
         for p in portfolios[:100]:
             weights = np.array(p["initial_weights"])
-            agent_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent"))
-            legacy_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"))
+            agent_results.append(
+                engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent")
+            )
+            legacy_results.append(
+                engine.run(
+                    p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"
+                )
+            )
 
         return ScenarioResult(
             scenario_name="Scenario 2: Market Crash",
@@ -98,8 +110,14 @@ class ScenarioRunner:
         legacy_results = []
         for p in portfolios[:50]:
             weights = np.array(p["initial_weights"])
-            agent_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent"))
-            legacy_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"))
+            agent_results.append(
+                engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent")
+            )
+            legacy_results.append(
+                engine.run(
+                    p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"
+                )
+            )
 
         return ScenarioResult(
             scenario_name="Scenario 3: Sector Rotation",
@@ -122,8 +140,14 @@ class ScenarioRunner:
         for p in affected:
             weights = np.array(p["initial_weights"])
             # Agent complies immediately; legacy waits for quarterly
-            agent_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent"))
-            legacy_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"))
+            agent_results.append(
+                engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent")
+            )
+            legacy_results.append(
+                engine.run(
+                    p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"
+                )
+            )
 
         return ScenarioResult(
             scenario_name="Scenario 4: Regulatory Event",
@@ -145,8 +169,14 @@ class ScenarioRunner:
         legacy_results = []
         for p in portfolios[:50]:
             weights = np.array(p["initial_weights"])
-            agent_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent"))
-            legacy_results.append(engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"))
+            agent_results.append(
+                engine.run(p["portfolio_id"], p["risk_category"], weights, 1_000_000, "agent")
+            )
+            legacy_results.append(
+                engine.run(
+                    p["portfolio_id"], p["risk_category"], weights, 1_000_000, "legacy_quarterly"
+                )
+            )
 
         return ScenarioResult(
             scenario_name="Scenario 5: Tax Harvesting Window",

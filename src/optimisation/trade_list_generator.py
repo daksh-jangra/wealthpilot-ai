@@ -12,9 +12,12 @@ from src.optimisation.cost_estimator import CostEstimator
 from src.optimisation.liquidity_scorer import LiquidityScorer
 
 ASSET_CLASSES = [
-    "indian_equity", "international_equity",
-    "indian_fixed_income", "international_fixed_income",
-    "alternatives", "cash",
+    "indian_equity",
+    "international_equity",
+    "indian_fixed_income",
+    "international_fixed_income",
+    "alternatives",
+    "cash",
 ]
 
 
@@ -24,7 +27,7 @@ class Trade:
     portfolio_id: str
     security_id: str
     asset_class: str
-    direction: str          # "BUY" or "SELL"
+    direction: str  # "BUY" or "SELL"
     quantity: float
     estimated_price_inr: float
     trade_value_inr: float
@@ -88,20 +91,22 @@ class TradeListGenerator:
             schedule = self.liquidity_scorer.schedule_execution(trade_value, sec_id, adv)
 
             self._trade_counter += 1
-            trades.append(Trade(
-                trade_id=f"TRD{self._trade_counter:08d}",
-                portfolio_id=portfolio_id,
-                security_id=sec_id,
-                asset_class=ac,
-                direction="BUY" if is_buy else "SELL",
-                quantity=round(qty, 4),
-                estimated_price_inr=round(price, 2),
-                trade_value_inr=round(abs(trade_value), 2),
-                estimated_cost_inr=cost_est.total_inr,
-                estimated_cost_bps=cost_est.total_bps,
-                execution_strategy=schedule["execution_strategy"],
-                days_to_execute=schedule["days_required"],
-            ))
+            trades.append(
+                Trade(
+                    trade_id=f"TRD{self._trade_counter:08d}",
+                    portfolio_id=portfolio_id,
+                    security_id=sec_id,
+                    asset_class=ac,
+                    direction="BUY" if is_buy else "SELL",
+                    quantity=round(qty, 4),
+                    estimated_price_inr=round(price, 2),
+                    trade_value_inr=round(abs(trade_value), 2),
+                    estimated_cost_inr=cost_est.total_inr,
+                    estimated_cost_bps=cost_est.total_bps,
+                    execution_strategy=schedule["execution_strategy"],
+                    days_to_execute=schedule["days_required"],
+                )
+            )
 
         return trades
 

@@ -10,6 +10,7 @@ import pandas as pd
 try:
     import shap
     import xgboost as xgb
+
     SHAP_AVAILABLE = True
 except Exception:
     SHAP_AVAILABLE = False
@@ -53,24 +54,23 @@ class SurrogateModelTrainer:
             raise ImportError("xgboost and shap are required")
         rng = np.random.default_rng(42)
 
-        X = pd.DataFrame({
-            "max_drift_pct": rng.uniform(0, 15, n_samples),
-            "sum_abs_drift_pct": rng.uniform(0, 30, n_samples),
-            "days_since_last_rebalance": rng.integers(0, 365, n_samples).astype(float),
-            "vix": rng.uniform(10, 50, n_samples),
-            "risk_score": rng.integers(1, 6, n_samples).astype(float),
-            "ltcg_lot_fraction": rng.uniform(0, 1, n_samples),
-            "sector_concentration_max": rng.uniform(0, 0.5, n_samples),
-            "portfolio_value_log": rng.uniform(10, 20, n_samples),
-        })
+        X = pd.DataFrame(
+            {
+                "max_drift_pct": rng.uniform(0, 15, n_samples),
+                "sum_abs_drift_pct": rng.uniform(0, 30, n_samples),
+                "days_since_last_rebalance": rng.integers(0, 365, n_samples).astype(float),
+                "vix": rng.uniform(10, 50, n_samples),
+                "risk_score": rng.integers(1, 6, n_samples).astype(float),
+                "ltcg_lot_fraction": rng.uniform(0, 1, n_samples),
+                "sector_concentration_max": rng.uniform(0, 0.5, n_samples),
+                "portfolio_value_log": rng.uniform(10, 20, n_samples),
+            }
+        )
 
         # Label: rebalance if drift > threshold or VIX spike
         drift_bands = [0.02, 0.025, 0.03, 0.04, 0.05]
         band = np.array([drift_bands[int(rs) - 1] for rs in X["risk_score"]])
-        y = (
-            (X["max_drift_pct"].values / 100 > band) |
-            (X["vix"].values > 35)
-        ).astype(int)
+        y = ((X["max_drift_pct"].values / 100 > band) | (X["vix"].values > 35)).astype(int)
 
         return X, pd.Series(y, name="rebalance")
 
@@ -109,7 +109,11 @@ class SurrogateModelTrainer:
         else:
             sv = shap_values[0]
 
-        base_value = float(self.explainer.expected_value[1] if isinstance(self.explainer.expected_value, list) else self.explainer.expected_value)
+        base_value = float(
+            self.explainer.expected_value[1]
+            if isinstance(self.explainer.expected_value, list)
+            else self.explainer.expected_value
+        )
         prediction = float(self.model.predict_proba(X_row)[0, 1])
 
         # Sort features by |shap|
@@ -125,9 +129,7 @@ class SurrogateModelTrainer:
         ]
 
         # Counterfactual: find the key feature to flip decision
-        counterfactual = self._generate_counterfactual(
-            portfolio_id, feature_values, sv, prediction
-        )
+        counterfactual = self._generate_counterfactual(portfolio_id, feature_values, sv, prediction)
 
         return SHAPExplanation(
             portfolio_id=portfolio_id,

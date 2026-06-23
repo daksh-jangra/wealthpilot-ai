@@ -8,7 +8,6 @@ from typing import Optional
 import json
 from pathlib import Path
 
-
 OVERRIDE_REASON_CATEGORIES = [
     "client_preference",
     "tax_consideration",
@@ -75,6 +74,7 @@ class OverrideCapture:
             raise ValueError(f"reason_category must be one of {OVERRIDE_REASON_CATEGORIES}")
 
         import uuid
+
         record = OverrideRecord(
             override_id=f"OVR{uuid.uuid4().hex[:8].upper()}",
             decision_id=decision_id,
@@ -102,6 +102,7 @@ class OverrideCapture:
 
     def override_rate_by_category(self) -> dict[str, int]:
         from collections import Counter
+
         return dict(Counter(r.reason_category for r in self._records))
 
     def generate_override_quality_report(self) -> dict:

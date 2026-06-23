@@ -63,7 +63,11 @@ def test_client_risk_categories_correct():
     gen = ClientProfileGenerator(seed=42)
     profiles = gen.generate_all()
     expected_cats = {
-        "ultra_conservative", "conservative", "balanced", "aggressive", "ultra_aggressive"
+        "ultra_conservative",
+        "conservative",
+        "balanced",
+        "aggressive",
+        "ultra_aggressive",
     }
     assert set(profiles["risk_category"].unique()) == expected_cats
 
@@ -124,8 +128,12 @@ def test_securities_master_asset_classes():
     gen = PortfolioGenerator(seed=42)
     master = gen.get_securities_master()
     expected = {
-        "indian_equity", "international_equity", "indian_fixed_income",
-        "international_fixed_income", "alternatives", "cash",
+        "indian_equity",
+        "international_equity",
+        "indian_fixed_income",
+        "international_fixed_income",
+        "alternatives",
+        "cash",
     }
     assert set(master["asset_class"].unique()) == expected
 
@@ -133,6 +141,7 @@ def test_securities_master_asset_classes():
 def test_portfolio_generator_small_client_set():
     """Verify generator works on a small custom client set."""
     from src.data.client_profile_generator import ClientProfileGenerator
+
     gen = PortfolioGenerator(seed=99)
     clients = ClientProfileGenerator(seed=99).generate_all()
     small = clients.iloc[:100]
@@ -143,16 +152,25 @@ def test_portfolio_generator_small_client_set():
 
 def test_portfolio_generator_tax_lots_have_required_columns():
     from src.data.client_profile_generator import ClientProfileGenerator
+
     gen = PortfolioGenerator(seed=42)
     clients = ClientProfileGenerator(seed=42).generate_all().iloc[:20]
     lots = gen.generate_tax_lots(clients)
-    required = {"portfolio_id", "security_id", "asset_class", "quantity",
-                "cost_per_unit_inr", "current_price_inr", "acquisition_date"}
+    required = {
+        "portfolio_id",
+        "security_id",
+        "asset_class",
+        "quantity",
+        "cost_per_unit_inr",
+        "current_price_inr",
+        "acquisition_date",
+    }
     assert required.issubset(set(lots.columns))
 
 
 def test_portfolio_generator_tax_lots_non_empty():
     from src.data.client_profile_generator import ClientProfileGenerator
+
     gen = PortfolioGenerator(seed=42)
     clients = ClientProfileGenerator(seed=42).generate_all().iloc[:10]
     lots = gen.generate_tax_lots(clients)
@@ -163,6 +181,7 @@ def test_portfolio_generator_tax_lots_non_empty():
 def test_tax_lot_dataclass_properties():
     from src.data.portfolio_generator import TaxLot
     from datetime import date, timedelta
+
     old_date = date.today() - timedelta(days=400)
     lot = TaxLot(
         security_id="IEQ001",

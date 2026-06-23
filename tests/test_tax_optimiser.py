@@ -9,38 +9,40 @@ from src.optimisation.tax_optimiser import TaxLotManager, TaxOptimiser, HOLDING_
 
 def _make_lot_df():
     today = date.today()
-    return pd.DataFrame([
-        {
-            "portfolio_id": "WP000001",
-            "security_id": "IEQ001",
-            "asset_class": "indian_equity",
-            "quantity": 100.0,
-            "cost_per_unit_inr": 80.0,
-            "current_price_inr": 100.0,
-            "acquisition_date": today - timedelta(days=400),  # long-term
-            "lot_value_inr": 10000.0,
-        },
-        {
-            "portfolio_id": "WP000001",
-            "security_id": "IEQ001",
-            "asset_class": "indian_equity",
-            "quantity": 50.0,
-            "cost_per_unit_inr": 110.0,
-            "current_price_inr": 100.0,
-            "acquisition_date": today - timedelta(days=100),  # short-term, at loss
-            "lot_value_inr": 5000.0,
-        },
-        {
-            "portfolio_id": "WP000002",
-            "security_id": "IEQ002",
-            "asset_class": "indian_equity",
-            "quantity": 200.0,
-            "cost_per_unit_inr": 120.0,
-            "current_price_inr": 90.0,  # at loss
-            "acquisition_date": today - timedelta(days=200),
-            "lot_value_inr": 18000.0,
-        },
-    ])
+    return pd.DataFrame(
+        [
+            {
+                "portfolio_id": "WP000001",
+                "security_id": "IEQ001",
+                "asset_class": "indian_equity",
+                "quantity": 100.0,
+                "cost_per_unit_inr": 80.0,
+                "current_price_inr": 100.0,
+                "acquisition_date": today - timedelta(days=400),  # long-term
+                "lot_value_inr": 10000.0,
+            },
+            {
+                "portfolio_id": "WP000001",
+                "security_id": "IEQ001",
+                "asset_class": "indian_equity",
+                "quantity": 50.0,
+                "cost_per_unit_inr": 110.0,
+                "current_price_inr": 100.0,
+                "acquisition_date": today - timedelta(days=100),  # short-term, at loss
+                "lot_value_inr": 5000.0,
+            },
+            {
+                "portfolio_id": "WP000002",
+                "security_id": "IEQ002",
+                "asset_class": "indian_equity",
+                "quantity": 200.0,
+                "cost_per_unit_inr": 120.0,
+                "current_price_inr": 90.0,  # at loss
+                "acquisition_date": today - timedelta(days=200),
+                "lot_value_inr": 18000.0,
+            },
+        ]
+    )
 
 
 @pytest.fixture

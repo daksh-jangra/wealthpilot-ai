@@ -17,7 +17,14 @@ def render(data: dict) -> None:
     with col1:
         risk_filter = st.selectbox(
             "Risk Category",
-            ["All", "ultra_conservative", "conservative", "balanced", "aggressive", "ultra_aggressive"],
+            [
+                "All",
+                "ultra_conservative",
+                "conservative",
+                "balanced",
+                "aggressive",
+                "ultra_aggressive",
+            ],
         )
     with col2:
         severity_filter = st.selectbox("Severity", ["All", "critical", "high", "medium", "low"])
@@ -29,24 +36,38 @@ def render(data: dict) -> None:
         filtered = filtered[filtered["severity"] == severity_filter]
 
     top_portfolios = filtered.head(50)["portfolio_id"].tolist() if not filtered.empty else []
-    selected_pid = st.selectbox("Portfolio ID", top_portfolios if top_portfolios else ["No portfolios match"])
+    selected_pid = st.selectbox(
+        "Portfolio ID", top_portfolios if top_portfolios else ["No portfolios match"]
+    )
 
     if not top_portfolios or selected_pid == "No portfolios match":
         st.info("No portfolios match the selected filters")
         return
 
     # Generate a sample explanation for the selected portfolio
-    portfolio_row = filtered[filtered["portfolio_id"] == selected_pid].iloc[0] if not filtered[filtered["portfolio_id"] == selected_pid].empty else None
+    portfolio_row = (
+        filtered[filtered["portfolio_id"] == selected_pid].iloc[0]
+        if not filtered[filtered["portfolio_id"] == selected_pid].empty
+        else None
+    )
 
     st.divider()
-    tabs = st.tabs(["Client Explanation", "Advisor Explanation", "Compliance Record", "SHAP Analysis"])
+    tabs = st.tabs(
+        ["Client Explanation", "Advisor Explanation", "Compliance Record", "SHAP Analysis"]
+    )
 
     meta = {
         "portfolio_id": selected_pid,
-        "risk_category": portfolio_row["risk_category"] if portfolio_row is not None else "balanced",
+        "risk_category": (
+            portfolio_row["risk_category"] if portfolio_row is not None else "balanced"
+        ),
         "trigger_type": "threshold_asset_class",
-        "max_drift_pct": float(portfolio_row["max_drift"] * 100) if portfolio_row is not None else 4.5,
-        "sum_abs_drift_pct": float(portfolio_row["sum_abs_drift"] * 100) if portfolio_row is not None else 9.0,
+        "max_drift_pct": (
+            float(portfolio_row["max_drift"] * 100) if portfolio_row is not None else 4.5
+        ),
+        "sum_abs_drift_pct": (
+            float(portfolio_row["sum_abs_drift"] * 100) if portfolio_row is not None else 9.0
+        ),
         "total_cost_inr": 3500,
         "tax_impact_inr": 0,
         "tracking_error_before": 4.2,
@@ -125,29 +146,39 @@ Overrides: 0
 def _render_shap_waterfall(drift_pct: float) -> None:
     """Display a mock SHAP waterfall chart."""
     features = [
-        "max_drift_pct", "vix", "days_since_rebalance",
-        "risk_score", "ltcg_fraction", "sector_conc",
+        "max_drift_pct",
+        "vix",
+        "days_since_rebalance",
+        "risk_score",
+        "ltcg_fraction",
+        "sector_conc",
     ]
     shap_vals = np.array([0.342, 0.082, -0.023, 0.015, -0.018, 0.009])
     base = 0.12
 
     colors = ["#ef4444" if v > 0 else "#3b82f6" for v in shap_vals]
 
-    fig = go.Figure(go.Bar(
-        x=shap_vals,
-        y=features,
-        orientation="h",
-        marker_color=colors,
-    ))
+    fig = go.Figure(
+        go.Bar(
+            x=shap_vals,
+            y=features,
+            orientation="h",
+            marker_color=colors,
+        )
+    )
     fig.update_layout(
         title="SHAP Waterfall — Rebalancing Decision",
         xaxis_title="SHAP Value",
         height=350,
         annotations=[
             dict(
-                x=0.5, y=-0.15, xref="paper", yref="paper",
+                x=0.5,
+                y=-0.15,
+                xref="paper",
+                yref="paper",
                 text=f"Base value: {base:.3f} | Model output: {base + shap_vals.sum():.3f}",
-                showarrow=False, font=dict(size=11),
+                showarrow=False,
+                font=dict(size=11),
             )
         ],
     )

@@ -9,19 +9,21 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
-
 ASSET_CLASSES = [
-    "indian_equity", "international_equity",
-    "indian_fixed_income", "international_fixed_income",
-    "alternatives", "cash",
+    "indian_equity",
+    "international_equity",
+    "indian_fixed_income",
+    "international_fixed_income",
+    "alternatives",
+    "cash",
 ]
 
 TARGET_ALLOCATIONS = {
     "ultra_conservative": np.array([0.10, 0.05, 0.45, 0.15, 0.10, 0.15]),
-    "conservative":       np.array([0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
-    "balanced":           np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
-    "aggressive":         np.array([0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
-    "ultra_aggressive":   np.array([0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
+    "conservative": np.array([0.20, 0.10, 0.35, 0.10, 0.12, 0.13]),
+    "balanced": np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08]),
+    "aggressive": np.array([0.50, 0.20, 0.10, 0.05, 0.10, 0.05]),
+    "ultra_aggressive": np.array([0.60, 0.25, 0.05, 0.00, 0.07, 0.03]),
 }
 
 
@@ -39,11 +41,11 @@ class DriftResult:
     risk_category: str
     current_weights: np.ndarray
     target_weights: np.ndarray
-    abs_drift: np.ndarray          # per asset-class absolute drift
-    max_drift: float               # largest single asset-class drift
-    sum_abs_drift: float           # L1 norm
-    rmsd: float                    # root-mean-square drift
-    drift_band: float              # category-specific threshold
+    abs_drift: np.ndarray  # per asset-class absolute drift
+    max_drift: float  # largest single asset-class drift
+    sum_abs_drift: float  # L1 norm
+    rmsd: float  # root-mean-square drift
+    drift_band: float  # category-specific threshold
     severity: DriftSeverity
     breaching_asset_classes: list[str]
 
@@ -62,18 +64,18 @@ class DriftResult:
 
 DRIFT_BANDS = {
     "ultra_conservative": 0.020,
-    "conservative":       0.025,
-    "balanced":           0.030,
-    "aggressive":         0.040,
-    "ultra_aggressive":   0.050,
+    "conservative": 0.025,
+    "balanced": 0.030,
+    "aggressive": 0.040,
+    "ultra_aggressive": 0.050,
 }
 
 SEVERITY_MULTIPLIERS = {
     DriftSeverity.CRITICAL: 2.0,
-    DriftSeverity.HIGH:     1.5,
-    DriftSeverity.MEDIUM:   1.0,
-    DriftSeverity.LOW:      0.5,
-    DriftSeverity.NONE:     0.0,
+    DriftSeverity.HIGH: 1.5,
+    DriftSeverity.MEDIUM: 1.0,
+    DriftSeverity.LOW: 0.5,
+    DriftSeverity.NONE: 0.0,
 }
 
 
@@ -111,7 +113,7 @@ class DriftCalculator:
         abs_drift_matrix = np.abs(current_matrix - target_matrix)
         max_drift_vec = abs_drift_matrix.max(axis=1)
         sum_abs_drift_vec = abs_drift_matrix.sum(axis=1)
-        rmsd_vec = np.sqrt((abs_drift_matrix ** 2).mean(axis=1))
+        rmsd_vec = np.sqrt((abs_drift_matrix**2).mean(axis=1))
 
         # Per-portfolio drift bands
         band_vec = np.array([bands[c] for c in cats])
@@ -119,13 +121,17 @@ class DriftCalculator:
         # Severity classification
         ratio = max_drift_vec / np.where(band_vec == 0, 1e-9, band_vec)
         severities = np.where(
-            ratio >= SEVERITY_MULTIPLIERS[DriftSeverity.CRITICAL], DriftSeverity.CRITICAL.value,
+            ratio >= SEVERITY_MULTIPLIERS[DriftSeverity.CRITICAL],
+            DriftSeverity.CRITICAL.value,
             np.where(
-                ratio >= SEVERITY_MULTIPLIERS[DriftSeverity.HIGH], DriftSeverity.HIGH.value,
+                ratio >= SEVERITY_MULTIPLIERS[DriftSeverity.HIGH],
+                DriftSeverity.HIGH.value,
                 np.where(
-                    ratio >= SEVERITY_MULTIPLIERS[DriftSeverity.MEDIUM], DriftSeverity.MEDIUM.value,
+                    ratio >= SEVERITY_MULTIPLIERS[DriftSeverity.MEDIUM],
+                    DriftSeverity.MEDIUM.value,
                     np.where(
-                        ratio >= SEVERITY_MULTIPLIERS[DriftSeverity.LOW], DriftSeverity.LOW.value,
+                        ratio >= SEVERITY_MULTIPLIERS[DriftSeverity.LOW],
+                        DriftSeverity.LOW.value,
                         DriftSeverity.NONE.value,
                     ),
                 ),
@@ -140,19 +146,21 @@ class DriftCalculator:
             ad = abs_drift_matrix[i]
             breaching = [ASSET_CLASSES[j] for j in range(6) if ad[j] > band]
 
-            results.append(DriftResult(
-                portfolio_id=pid,
-                risk_category=cat,
-                current_weights=current_matrix[i].copy(),
-                target_weights=target_matrix[i].copy(),
-                abs_drift=ad.copy(),
-                max_drift=float(max_drift_vec[i]),
-                sum_abs_drift=float(sum_abs_drift_vec[i]),
-                rmsd=float(rmsd_vec[i]),
-                drift_band=float(band),
-                severity=DriftSeverity(severities[i]),
-                breaching_asset_classes=breaching,
-            ))
+            results.append(
+                DriftResult(
+                    portfolio_id=pid,
+                    risk_category=cat,
+                    current_weights=current_matrix[i].copy(),
+                    target_weights=target_matrix[i].copy(),
+                    abs_drift=ad.copy(),
+                    max_drift=float(max_drift_vec[i]),
+                    sum_abs_drift=float(sum_abs_drift_vec[i]),
+                    rmsd=float(rmsd_vec[i]),
+                    drift_band=float(band),
+                    severity=DriftSeverity(severities[i]),
+                    breaching_asset_classes=breaching,
+                )
+            )
 
         # Return sorted by severity (critical first)
         severity_order = {
@@ -198,7 +206,7 @@ class DriftCalculator:
             abs_drift=ad,
             max_drift=max_drift,
             sum_abs_drift=float(ad.sum()),
-            rmsd=float(np.sqrt((ad ** 2).mean())),
+            rmsd=float(np.sqrt((ad**2).mean())),
             drift_band=band,
             severity=severity,
             breaching_asset_classes=breaching,

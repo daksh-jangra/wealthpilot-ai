@@ -10,7 +10,6 @@ from typing import Optional
 
 from src.data.client_profile_generator import ClientProfileGenerator
 
-
 ASSET_CLASSES = [
     "indian_equity",
     "international_equity",
@@ -22,10 +21,10 @@ ASSET_CLASSES = [
 
 TARGET_ALLOCATIONS = {
     "ultra_conservative": [0.10, 0.05, 0.45, 0.15, 0.10, 0.15],
-    "conservative":       [0.20, 0.10, 0.35, 0.10, 0.12, 0.13],
-    "balanced":           [0.35, 0.15, 0.20, 0.10, 0.12, 0.08],
-    "aggressive":         [0.50, 0.20, 0.10, 0.05, 0.10, 0.05],
-    "ultra_aggressive":   [0.60, 0.25, 0.05, 0.00, 0.07, 0.03],
+    "conservative": [0.20, 0.10, 0.35, 0.10, 0.12, 0.13],
+    "balanced": [0.35, 0.15, 0.20, 0.10, 0.12, 0.08],
+    "aggressive": [0.50, 0.20, 0.10, 0.05, 0.10, 0.05],
+    "ultra_aggressive": [0.60, 0.25, 0.05, 0.00, 0.07, 0.03],
 }
 
 
@@ -71,9 +70,7 @@ class PortfolioGenerator:
         if client_profiles is None:
             client_profiles = self.client_gen.generate_all()
 
-        targets = np.array([
-            TARGET_ALLOCATIONS[cat] for cat in client_profiles["risk_category"]
-        ])
+        targets = np.array([TARGET_ALLOCATIONS[cat] for cat in client_profiles["risk_category"]])
 
         # Add realistic drift noise (correlated across asset classes)
         noise = self.rng.normal(0, drift_noise_std, size=targets.shape)
@@ -140,31 +137,42 @@ class PortfolioGenerator:
                     acq_date = date.today() - timedelta(days=days_ago)
 
                     # Cost per unit: current price ± some appreciation
-                    current_price = 100.0 if current_prices is None else float(current_prices.get(ac, 100.0))
+                    current_price = (
+                        100.0 if current_prices is None else float(current_prices.get(ac, 100.0))
+                    )
                     appreciation = self.rng.uniform(0.70, 1.50)
                     cost_per_unit = current_price / appreciation
 
                     quantity = lot_value / current_price
                     security_id = f"{ac.upper()[:3]}{self.rng.integers(100, 999):03d}"
 
-                    rows.append({
-                        "portfolio_id": cid,
-                        "security_id": security_id,
-                        "asset_class": ac,
-                        "quantity": round(quantity, 4),
-                        "cost_per_unit_inr": round(cost_per_unit, 2),
-                        "current_price_inr": round(current_price, 2),
-                        "acquisition_date": acq_date.isoformat(),
-                        "lot_value_inr": round(lot_value, 2),
-                    })
+                    rows.append(
+                        {
+                            "portfolio_id": cid,
+                            "security_id": security_id,
+                            "asset_class": ac,
+                            "quantity": round(quantity, 4),
+                            "cost_per_unit_inr": round(cost_per_unit, 2),
+                            "current_price_inr": round(current_price, 2),
+                            "acquisition_date": acq_date.isoformat(),
+                            "lot_value_inr": round(lot_value, 2),
+                        }
+                    )
 
         return pd.DataFrame(rows)
 
     def get_securities_master(self, n_securities: int = 500) -> pd.DataFrame:
         """Return a master table of tradeable securities."""
         sectors = [
-            "financials", "technology", "energy", "healthcare",
-            "consumer", "industrials", "materials", "utilities", "real_estate",
+            "financials",
+            "technology",
+            "energy",
+            "healthcare",
+            "consumer",
+            "industrials",
+            "materials",
+            "utilities",
+            "real_estate",
         ]
         ac_dist = {
             "indian_equity": 200,
@@ -180,14 +188,16 @@ class PortfolioGenerator:
                 sector = self.rng.choice(sectors)
                 avg_daily_vol = float(self.rng.lognormal(np.log(1e7), 1.0))
                 bid_ask_bps = float(self.rng.uniform(3, 50))
-                records.append({
-                    "security_id": f"{ac.upper()[:3]}{i:03d}",
-                    "asset_class": ac,
-                    "sector": sector,
-                    "avg_daily_volume_inr": avg_daily_vol,
-                    "bid_ask_spread_bps": bid_ask_bps,
-                    "current_price_inr": float(self.rng.uniform(10, 5000)),
-                    "is_esg_compliant": bool(self.rng.random() < 0.60),
-                    "exit_load_pct": 0.01 if ac == "indian_equity" else 0.0,
-                })
+                records.append(
+                    {
+                        "security_id": f"{ac.upper()[:3]}{i:03d}",
+                        "asset_class": ac,
+                        "sector": sector,
+                        "avg_daily_volume_inr": avg_daily_vol,
+                        "bid_ask_spread_bps": bid_ask_bps,
+                        "current_price_inr": float(self.rng.uniform(10, 5000)),
+                        "is_esg_compliant": bool(self.rng.random() < 0.60),
+                        "exit_load_pct": 0.01 if ac == "indian_equity" else 0.0,
+                    }
+                )
         return pd.DataFrame(records)

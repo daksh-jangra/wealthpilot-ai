@@ -11,8 +11,16 @@ from src.triggers.trigger_evaluator import (
     TriggerPriority,
     PRIORITY_ORDER,
 )
-from src.triggers.threshold_trigger import ThresholdTrigger, ConcentrationTrigger, FactorExposureTrigger
-from src.triggers.calendar_trigger import MonthlyCalendarTrigger, QuarterlyCalendarTrigger, AnnualCalendarTrigger
+from src.triggers.threshold_trigger import (
+    ThresholdTrigger,
+    ConcentrationTrigger,
+    FactorExposureTrigger,
+)
+from src.triggers.calendar_trigger import (
+    MonthlyCalendarTrigger,
+    QuarterlyCalendarTrigger,
+    AnnualCalendarTrigger,
+)
 from src.triggers.event_trigger import (
     MarketCrashTrigger,
     RegulatoryChangeTrigger,

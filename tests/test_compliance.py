@@ -9,14 +9,15 @@ from src.compliance.regulatory_reporter import RegulatoryReporter
 from src.compliance.bias_detector import BiasDetector
 from src.compliance.explainability_scorecard import ExplainabilityScorecard
 
-
 SAMPLE_DECISIONS = [
     {
         "decision_id": f"DEC{i:08d}",
         "decision_metadata": {
             "portfolio_id": f"WP{i:06d}",
             "risk_category": ["balanced", "aggressive", "conservative"][i % 3],
-            "trigger_type": ["threshold_asset_class", "calendar_quarterly", "event_market_crash"][i % 3],
+            "trigger_type": ["threshold_asset_class", "calendar_quarterly", "event_market_crash"][
+                i % 3
+            ],
             "max_drift_pct": 4.5 + i * 0.1,
             "sum_abs_drift_pct": 9.0,
             "total_cost_inr": 3500,
@@ -26,13 +27,26 @@ SAMPLE_DECISIONS = [
             "timestamp": "2025-03-14T09:23:45Z",
         },
         "explanations": {
-            "client": {"narrative": "Your portfolio has drifted 4.5% from target. We are rebalancing. Cost: INR 3,500."},
-            "advisor": {"narrative": "Drift 4.5% detected. Tracking error reduced. Trade cost 3,500. Cost analysis complete."},
-            "compliance": {"narrative": "Decision audit: constraint check passed. Trigger threshold detected. SEBI rules followed. Model v1.0."},
+            "client": {
+                "narrative": "Your portfolio has drifted 4.5% from target. We are rebalancing. Cost: INR 3,500."
+            },
+            "advisor": {
+                "narrative": "Drift 4.5% detected. Tracking error reduced. Trade cost 3,500. Cost analysis complete."
+            },
+            "compliance": {
+                "narrative": "Decision audit: constraint check passed. Trigger threshold detected. SEBI rules followed. Model v1.0."
+            },
         },
         "trades": [
-            {"trade_id": f"TRD{i:08d}", "security_id": "IEQ001", "asset_class": "indian_equity",
-             "direction": "BUY", "quantity": 100, "trade_value_inr": 10000, "estimated_cost_inr": 150}
+            {
+                "trade_id": f"TRD{i:08d}",
+                "security_id": "IEQ001",
+                "asset_class": "indian_equity",
+                "direction": "BUY",
+                "quantity": 100,
+                "trade_value_inr": 10000,
+                "estimated_cost_inr": 150,
+            }
         ],
         "override_history": [],
     }
@@ -59,10 +73,7 @@ def test_compliance_auditor_explanation_quality():
 def test_compliance_auditor_detects_category_bias():
     auditor = ComplianceAuditor()
     # All decisions for one category — detect_systematic_bias expects flat dicts
-    biased_log = [
-        {"risk_category": "balanced", "trigger_type": "threshold"}
-        for _ in range(20)
-    ]
+    biased_log = [{"risk_category": "balanced", "trigger_type": "threshold"} for _ in range(20)]
     bias = auditor.detect_systematic_bias(biased_log)
     # One category dominates — should appear in bias report
     assert "balanced" in bias
@@ -106,7 +117,10 @@ def test_regulatory_reporter_exception_report():
     decisions_with_violation = SAMPLE_DECISIONS[:5].copy()
     decisions_with_violation[0] = {
         **SAMPLE_DECISIONS[0],
-        "decision_metadata": {**SAMPLE_DECISIONS[0]["decision_metadata"], "constraint_checks": {"hard": 1, "soft": 0, "details": []}},
+        "decision_metadata": {
+            **SAMPLE_DECISIONS[0]["decision_metadata"],
+            "constraint_checks": {"hard": 1, "soft": 0, "details": []},
+        },
         "override_history": [],
     }
     df = reporter.generate_exception_report(decisions_with_violation)
@@ -117,8 +131,10 @@ def test_regulatory_reporter_exception_report():
 def test_bias_detector_category_bias():
     detector = BiasDetector()
     # detect_category_bias flattens the list into a DataFrame directly
-    log = [{"risk_category": "balanced", "trigger_type": "t", "max_drift_pct": 4.0, "vix": 18.0}
-           for _ in range(20)]
+    log = [
+        {"risk_category": "balanced", "trigger_type": "t", "max_drift_pct": 4.0, "vix": 18.0}
+        for _ in range(20)
+    ]
     result = detector.detect_category_bias(log)
     assert "chi2_statistic" in result
     assert "significant_bias" in result
@@ -136,8 +152,14 @@ def test_bias_detector_security_bias():
 def test_bias_detector_momentum_bias():
     detector = BiasDetector()
     log = [
-        {"decision_metadata": {"risk_category": "balanced", "trigger_type": "t",
-                                "max_drift_pct": 3.0 + i * 0.5, "vix": 18.0 + i * 2}}
+        {
+            "decision_metadata": {
+                "risk_category": "balanced",
+                "trigger_type": "t",
+                "max_drift_pct": 3.0 + i * 0.5,
+                "vix": 18.0 + i * 2,
+            }
+        }
         for i in range(15)
     ]
     result = detector.detect_momentum_bias(log)
@@ -146,7 +168,9 @@ def test_bias_detector_momentum_bias():
 
 def test_bias_detector_insufficient_data():
     detector = BiasDetector()
-    result = detector.detect_momentum_bias([{"decision_metadata": {"max_drift_pct": 4.0, "vix": 18.0}}])
+    result = detector.detect_momentum_bias(
+        [{"decision_metadata": {"max_drift_pct": 4.0, "vix": 18.0}}]
+    )
     assert "error" in result
 
 
@@ -158,14 +182,18 @@ def test_scorecard_client_pass():
         "We are rebalancing to restore your chosen risk level. "
         "This will cost INR 3,500. Your portfolio will be back on track."
     )
-    score = scorecard.score("TEST001", "client", narrative, {"max_drift_pct": 4.5, "total_cost_inr": 3500})
+    score = scorecard.score(
+        "TEST001", "client", narrative, {"max_drift_pct": 4.5, "total_cost_inr": 3500}
+    )
     assert score.overall_score > 0.5
 
 
 def test_scorecard_compliance_requires_keywords():
     scorecard = ExplainabilityScorecard()
     narrative = "Decision audit log. Constraint check: passed. SEBI regulations. Trigger: threshold. Model v1.0."
-    score = scorecard.score("TEST002", "compliance", narrative, {"max_drift_pct": 4.0, "total_cost_inr": 3000})
+    score = scorecard.score(
+        "TEST002", "compliance", narrative, {"max_drift_pct": 4.0, "total_cost_inr": 3000}
+    )
     assert score.regulatory_score > 0.5
 
 

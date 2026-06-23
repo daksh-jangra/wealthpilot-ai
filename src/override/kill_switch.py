@@ -10,9 +10,9 @@ from typing import Optional
 @dataclass
 class KillSwitchEvent:
     event_id: str
-    action: str           # "activated" | "deactivated"
+    action: str  # "activated" | "deactivated"
     reason: str
-    triggered_by: str     # "manual" | "auto_vix" | "auto_error_rate"
+    triggered_by: str  # "manual" | "auto_vix" | "auto_error_rate"
     timestamp: str
     vix_at_trigger: Optional[float] = None
     error_rate_at_trigger: Optional[float] = None
@@ -40,6 +40,7 @@ class KillSwitch:
 
     def activate(self, reason: str, triggered_by: str = "manual") -> KillSwitchEvent:
         import uuid
+
         self._active = True
         event = KillSwitchEvent(
             event_id=f"KS{uuid.uuid4().hex[:8].upper()}",
@@ -55,6 +56,7 @@ class KillSwitch:
 
     def deactivate(self, reason: str, triggered_by: str = "manual") -> KillSwitchEvent:
         import uuid
+
         self._active = False
         event = KillSwitchEvent(
             event_id=f"KS{uuid.uuid4().hex[:8].upper()}",
