@@ -1,6 +1,5 @@
 """Tests for compliance layer: auditor, regulatory reporter, bias detector, scorecard."""
 
-
 from src.compliance.bias_detector import BiasDetector
 from src.compliance.compliance_auditor import ComplianceAuditor
 from src.compliance.explainability_scorecard import ExplainabilityScorecard
