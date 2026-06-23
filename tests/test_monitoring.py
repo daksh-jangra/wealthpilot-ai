@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from src.monitoring.drift_calculator import DriftSeverity
 from src.monitoring.drift_monitor import DriftMonitor
-from src.monitoring.threshold_manager import ThresholdManager, BASE_DRIFT_BANDS
-from src.monitoring.drift_calculator import DriftCalculator, DriftSeverity
+from src.monitoring.threshold_manager import BASE_DRIFT_BANDS, ThresholdManager
 
 ASSET_CLASSES = [
     "indian_equity",

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+
 import numpy as np
 import pandas as pd
 
@@ -37,7 +37,7 @@ class SHAPExplanation:
     base_value: float
     prediction: float
     top_features: list[dict]  # sorted by |shap| descending
-    counterfactual: Optional[str] = None
+    counterfactual: str | None = None
 
 
 class SurrogateModelTrainer:
@@ -45,8 +45,8 @@ class SurrogateModelTrainer:
 
     def __init__(self, random_state: int = 42):
         self.random_state = random_state
-        self.model: Optional[xgb.XGBClassifier] = None
-        self.explainer: Optional[shap.TreeExplainer] = None
+        self.model: xgb.XGBClassifier | None = None
+        self.explainer: shap.TreeExplainer | None = None
 
     def generate_training_data(self, n_samples: int = 10000) -> tuple[pd.DataFrame, pd.Series]:
         """Generate synthetic training data based on known rebalancing rules."""
@@ -74,7 +74,7 @@ class SurrogateModelTrainer:
 
         return X, pd.Series(y, name="rebalance")
 
-    def train(self, X: Optional[pd.DataFrame] = None, y: Optional[pd.Series] = None) -> None:
+    def train(self, X: pd.DataFrame | None = None, y: pd.Series | None = None) -> None:
         if not SHAP_AVAILABLE:
             raise ImportError("xgboost and shap are required")
         if X is None or y is None:
@@ -153,7 +153,6 @@ class SurrogateModelTrainer:
         top_idx = int(np.argmax(np.abs(shap_values)))
         feature = FEATURE_NAMES[top_idx]
         current_val = feature_values[top_idx]
-        shap_val = shap_values[top_idx]
 
         if prediction >= 0.5:
             # Would not rebalance if feature were lower

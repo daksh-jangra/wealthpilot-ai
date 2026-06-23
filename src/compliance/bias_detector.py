@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 from scipy import stats
 
@@ -78,7 +77,7 @@ class BiasDetector:
         }
 
     def full_bias_report(
-        self, decision_log: list[dict], trade_log: Optional[list[dict]] = None
+        self, decision_log: list[dict], trade_log: list[dict] | None = None
     ) -> dict:
         return {
             "category_bias": self.detect_category_bias(decision_log),
@@ -89,4 +88,3 @@ class BiasDetector:
 
 
 # Avoid missing import annotation
-from typing import Optional

@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
-from typing import Optional, Literal
-from pydantic import BaseModel, Field
+from typing import Literal
 
 import anthropic
+from pydantic import BaseModel, Field
 
 
 class ExplanationOutput(BaseModel):
@@ -15,7 +14,7 @@ class ExplanationOutput(BaseModel):
     narrative: str
     trigger_summary: str
     key_numbers: dict = Field(default_factory=dict)
-    readability_grade: Optional[float] = None
+    readability_grade: float | None = None
     word_count: int = 0
     complete: bool = True
 
@@ -60,7 +59,7 @@ class ExplanationGenerator:
     def __init__(
         self,
         model: str = "claude-sonnet-4-6",
-        client: Optional[anthropic.Anthropic] = None,
+        client: anthropic.Anthropic | None = None,
     ):
         self.model = model
         self.client = client or anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
@@ -69,8 +68,8 @@ class ExplanationGenerator:
         self,
         audience: Literal["client", "advisor", "compliance"],
         decision_metadata: dict,
-        temperature: Optional[float] = None,
-        max_tokens: Optional[int] = None,
+        temperature: float | None = None,
+        max_tokens: int | None = None,
     ) -> ExplanationOutput:
         """Generate an explanation for the given audience."""
         temp_map = {"client": 0.45, "advisor": 0.35, "compliance": 0.15}
@@ -91,7 +90,7 @@ class ExplanationGenerator:
                 messages=[{"role": "user", "content": user_prompt}],
             )
             narrative = response.content[0].text.strip()
-        except Exception as e:
+        except Exception:
             narrative = self._fallback_narrative(audience, decision_metadata)
 
         output = ExplanationOutput(

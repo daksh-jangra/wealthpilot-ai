@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+
 import numpy as np
 
 try:
@@ -42,7 +42,7 @@ class PortfolioOptimiser:
 
     def __init__(
         self,
-        constraint_manager: Optional[ConstraintManager] = None,
+        constraint_manager: ConstraintManager | None = None,
         solver: str = "OSQP",
     ):
         self.constraint_manager = constraint_manager or ConstraintManager()
@@ -54,11 +54,11 @@ class PortfolioOptimiser:
         self,
         current_weights: np.ndarray,
         target_weights: np.ndarray,
-        covariance_matrix: Optional[np.ndarray] = None,
-        turnover_budget: Optional[float] = None,
-        sector_weights: Optional[dict] = None,
-        issuer_weights: Optional[dict] = None,
-        restricted_indices: Optional[list[int]] = None,
+        covariance_matrix: np.ndarray | None = None,
+        turnover_budget: float | None = None,
+        sector_weights: dict | None = None,
+        issuer_weights: dict | None = None,
+        restricted_indices: list[int] | None = None,
         cash_flow_fraction: float = 0.0,
         portfolio_value_inr: float = 1_000_000,
     ) -> OptimisationResult:

@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.monitoring.drift_calculator import DriftCalculator, DriftSeverity, DRIFT_BANDS
+from src.monitoring.drift_calculator import DRIFT_BANDS, DriftCalculator, DriftSeverity
 
 ASSET_CLASSES = [
     "indian_equity",
@@ -67,7 +67,6 @@ def test_batch_vectorised(calculator):
 
     # Verify sorted (critical/high before none)
     severities = [r.severity for r in results]
-    from src.monitoring.drift_calculator import SEVERITY_MULTIPLIERS
 
     order_map = {
         DriftSeverity.CRITICAL: 0,

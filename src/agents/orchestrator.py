@@ -7,29 +7,27 @@ Tax Specialist, Compliance Officer, Explanation Writer.
 from __future__ import annotations
 
 import os
-from typing import Optional
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 try:
-    from crewai import Agent, Task, Crew, Process
+    from crewai import Agent
     from langchain_anthropic import ChatAnthropic
 
     CREWAI_AVAILABLE = True
 except ImportError:
     CREWAI_AVAILABLE = False
 
-from src.monitoring.drift_calculator import DriftResult
-from src.triggers.trigger_consolidator import ConsolidatedTrigger
-from src.optimisation.portfolio_optimiser import PortfolioOptimiser, OptimisationResult
-from src.optimisation.trade_list_generator import TradeListGenerator, Trade
-from src.optimisation.tax_optimiser import TaxOptimiser
-from src.optimisation.constraint_manager import ConstraintManager
-from src.explainability.explanation_generator import ExplanationGenerator
-from src.explainability.shap_integration import SHAPIntegration
-
 import numpy as np
 import pandas as pd
+
+from src.explainability.explanation_generator import ExplanationGenerator
+from src.explainability.shap_integration import SHAPIntegration
+from src.monitoring.drift_calculator import DriftResult
+from src.optimisation.constraint_manager import ConstraintManager
+from src.optimisation.portfolio_optimiser import PortfolioOptimiser
+from src.optimisation.trade_list_generator import Trade, TradeListGenerator
+from src.triggers.trigger_consolidator import ConsolidatedTrigger
 
 TARGET_ALLOCATIONS = {
     "ultra_conservative": np.array([0.10, 0.05, 0.45, 0.15, 0.10, 0.15]),
@@ -50,7 +48,7 @@ class RebalancingOrchestrator:
         self,
         model: str = "claude-sonnet-4-6",
         use_crewai: bool = True,
-        securities_master: Optional[pd.DataFrame] = None,
+        securities_master: pd.DataFrame | None = None,
     ):
         self.model_name = model
         self.use_crewai = use_crewai and CREWAI_AVAILABLE

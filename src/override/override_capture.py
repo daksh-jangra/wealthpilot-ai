@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Optional
 import json
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 OVERRIDE_REASON_CATEGORIES = [
@@ -30,9 +29,9 @@ class OverrideRecord:
     modified_recommendation: dict
     reason_category: str
     reason_free_text: str
-    override_trade_list: Optional[list] = None
+    override_trade_list: list | None = None
     outcome_tracked: bool = False
-    outcome: Optional[dict] = None
+    outcome: dict | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -54,7 +53,7 @@ class OverrideCapture:
     In production this would persist to a database; here we use in-memory + JSONL.
     """
 
-    def __init__(self, storage_path: Optional[Path] = None):
+    def __init__(self, storage_path: Path | None = None):
         self._records: list[OverrideRecord] = []
         self._storage_path = storage_path
 
@@ -67,7 +66,7 @@ class OverrideCapture:
         modified_recommendation: dict,
         reason_category: str,
         reason_free_text: str,
-        override_trade_list: Optional[list] = None,
+        override_trade_list: list | None = None,
     ) -> OverrideRecord:
         """Record a human override of an agent recommendation."""
         if reason_category not in OVERRIDE_REASON_CATEGORIES:
@@ -94,7 +93,7 @@ class OverrideCapture:
     def get_portfolio_overrides(self, portfolio_id: str) -> list[OverrideRecord]:
         return [r for r in self._records if r.portfolio_id == portfolio_id]
 
-    def get_decision_override(self, decision_id: str) -> Optional[OverrideRecord]:
+    def get_decision_override(self, decision_id: str) -> OverrideRecord | None:
         for r in self._records:
             if r.decision_id == decision_id:
                 return r

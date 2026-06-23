@@ -6,7 +6,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 
 class TriggerType(str, Enum):
@@ -88,7 +87,7 @@ class TriggerEvaluator(ABC):
     """Abstract base class for all trigger evaluators."""
 
     @abstractmethod
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         """Evaluate whether a trigger fires for a given portfolio and context."""
 
     def _make_event(
@@ -96,7 +95,7 @@ class TriggerEvaluator(ABC):
         portfolio_id: str,
         trigger_type: TriggerType,
         details: dict,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ) -> TriggerEvent:
         return TriggerEvent(
             portfolio_id=portfolio_id,

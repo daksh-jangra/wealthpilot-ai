@@ -1,11 +1,11 @@
 """Compliance-level explanation builder: full audit record with SEBI references."""
 
 from __future__ import annotations
+
 from datetime import datetime
-from typing import Optional
 
 from src.explainability.explanation_generator import ExplanationGenerator, ExplanationOutput
-from src.explainability.shap_integration import SHAPIntegration, SHAPExplanation
+from src.explainability.shap_integration import SHAPIntegration
 
 SEBI_REFERENCES = {
     "sebi_intl_equity": "SEBI Circular SEBI/HO/IMD/IMD-II DOF3/P/CIR/2022/0154 (international equity limits)",
@@ -20,7 +20,7 @@ class ComplianceExplainer:
     def __init__(
         self,
         generator: ExplanationGenerator,
-        shap: Optional[SHAPIntegration] = None,
+        shap: SHAPIntegration | None = None,
     ):
         self.generator = generator
         self.shap = shap or SHAPIntegration()
@@ -64,7 +64,7 @@ class ComplianceExplainer:
         self,
         decision_metadata: dict,
         explanation: ExplanationOutput,
-        trade_list: Optional[list] = None,
+        trade_list: list | None = None,
     ) -> dict:
         return {
             "decision_id": decision_metadata.get("decision_id", "UNKNOWN"),

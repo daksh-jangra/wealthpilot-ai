@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 
 @dataclass
@@ -14,8 +13,8 @@ class KillSwitchEvent:
     reason: str
     triggered_by: str  # "manual" | "auto_vix" | "auto_error_rate"
     timestamp: str
-    vix_at_trigger: Optional[float] = None
-    error_rate_at_trigger: Optional[float] = None
+    vix_at_trigger: float | None = None
+    error_rate_at_trigger: float | None = None
 
 
 class KillSwitch:

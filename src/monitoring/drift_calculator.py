@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import heapq
-import numpy as np
-import pandas as pd
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+
+import numpy as np
+import pandas as pd
 
 ASSET_CLASSES = [
     "indian_equity",
@@ -89,7 +89,7 @@ class DriftCalculator:
         self,
         current_weights: pd.DataFrame,
         risk_categories: pd.Series,
-        drift_bands: Optional[dict[str, float]] = None,
+        drift_bands: dict[str, float] | None = None,
     ) -> list[DriftResult]:
         """
         Vectorised batch drift calculation.
@@ -178,7 +178,7 @@ class DriftCalculator:
         portfolio_id: str,
         current_weights: np.ndarray,
         risk_category: str,
-        drift_band: Optional[float] = None,
+        drift_band: float | None = None,
     ) -> DriftResult:
         """Compute drift for a single portfolio."""
         target = TARGET_ALLOCATIONS[risk_category]

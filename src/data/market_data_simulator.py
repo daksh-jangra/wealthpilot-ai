@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass, field
-from typing import Optional
 
 
 @dataclass
@@ -72,7 +72,7 @@ class MarketParameters:
 class MarketDataSimulator:
     """Generate synthetic market return time series."""
 
-    def __init__(self, params: Optional[MarketParameters] = None, seed: int = 42):
+    def __init__(self, params: MarketParameters | None = None, seed: int = 42):
         self.params = params or MarketParameters()
         self.rng = np.random.default_rng(seed)
         self._validate_params()
@@ -84,7 +84,7 @@ class MarketDataSimulator:
         if eigenvalues.min() < -1e-8:
             raise ValueError("Correlation matrix is not positive semi-definite")
 
-    def simulate_returns(self, num_days: Optional[int] = None) -> pd.DataFrame:
+    def simulate_returns(self, num_days: int | None = None) -> pd.DataFrame:
         """Generate daily log-returns for all asset classes."""
         days = num_days or self.params.trading_days
         n = len(self.params.asset_classes)
@@ -116,7 +116,7 @@ class MarketDataSimulator:
         dates = pd.bdate_range(start="2024-04-01", periods=days, freq="B")
         return pd.DataFrame(returns, index=dates, columns=self.params.asset_classes)
 
-    def simulate_price_levels(self, base_values: Optional[dict] = None) -> pd.DataFrame:
+    def simulate_price_levels(self, base_values: dict | None = None) -> pd.DataFrame:
         """Cumulative price index from simulated returns."""
         returns = self.simulate_returns()
         if base_values is None:
@@ -125,7 +125,7 @@ class MarketDataSimulator:
         prices = (1 + returns).cumprod() * base
         return prices
 
-    def get_vix_series(self, num_days: Optional[int] = None) -> pd.Series:
+    def get_vix_series(self, num_days: int | None = None) -> pd.Series:
         """Simulate a VIX-like volatility index."""
         days = num_days or self.params.trading_days
         # Mean-reverting VIX: Ornstein-Uhlenbeck process
@@ -148,7 +148,7 @@ class MarketDataSimulator:
         dates = pd.bdate_range(start="2024-04-01", periods=days, freq="B")
         return pd.Series(vix, index=dates, name="VIX")
 
-    def get_nifty_returns(self, num_days: Optional[int] = None) -> pd.Series:
+    def get_nifty_returns(self, num_days: int | None = None) -> pd.Series:
         """Return the Indian equity component as the Nifty 50 proxy."""
         returns = self.simulate_returns(num_days)
         return returns["indian_equity"].rename("NIFTY_50")

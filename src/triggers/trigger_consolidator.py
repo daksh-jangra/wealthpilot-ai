@@ -4,29 +4,28 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
 
-from src.triggers.trigger_evaluator import (
-    TriggerEvent,
-    TriggerPriority,
-    PRIORITY_ORDER,
-)
-from src.triggers.threshold_trigger import (
-    ThresholdTrigger,
-    ConcentrationTrigger,
-    FactorExposureTrigger,
-)
 from src.triggers.calendar_trigger import (
+    AnnualCalendarTrigger,
     MonthlyCalendarTrigger,
     QuarterlyCalendarTrigger,
-    AnnualCalendarTrigger,
 )
 from src.triggers.event_trigger import (
+    CashFlowTrigger,
+    ClientLifeEventTrigger,
     MarketCrashTrigger,
     RegulatoryChangeTrigger,
-    ClientLifeEventTrigger,
     TaxHarvestingTrigger,
-    CashFlowTrigger,
+)
+from src.triggers.threshold_trigger import (
+    ConcentrationTrigger,
+    FactorExposureTrigger,
+    ThresholdTrigger,
+)
+from src.triggers.trigger_evaluator import (
+    PRIORITY_ORDER,
+    TriggerEvent,
+    TriggerPriority,
 )
 
 
@@ -77,10 +76,10 @@ class TriggerConsolidator:
     into a single ConsolidatedTrigger with the highest priority timeline.
     """
 
-    def __init__(self, evaluators: Optional[list] = None):
+    def __init__(self, evaluators: list | None = None):
         self.evaluators = evaluators or ALL_EVALUATORS
 
-    def evaluate_portfolio(self, portfolio_id: str, context: dict) -> Optional[ConsolidatedTrigger]:
+    def evaluate_portfolio(self, portfolio_id: str, context: dict) -> ConsolidatedTrigger | None:
         """Run all evaluators and consolidate fired triggers."""
         fired: list[TriggerEvent] = []
         for evaluator in self.evaluators:

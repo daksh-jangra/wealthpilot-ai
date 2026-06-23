@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
-import numpy as np
+
 import pandas as pd
 
-from src.optimisation.portfolio_optimiser import OptimisationResult
 from src.optimisation.cost_estimator import CostEstimator
 from src.optimisation.liquidity_scorer import LiquidityScorer
+from src.optimisation.portfolio_optimiser import OptimisationResult
 
 ASSET_CLASSES = [
     "indian_equity",
@@ -42,8 +41,8 @@ class TradeListGenerator:
 
     def __init__(
         self,
-        cost_estimator: Optional[CostEstimator] = None,
-        liquidity_scorer: Optional[LiquidityScorer] = None,
+        cost_estimator: CostEstimator | None = None,
+        liquidity_scorer: LiquidityScorer | None = None,
     ):
         self.cost_estimator = cost_estimator or CostEstimator()
         self.liquidity_scorer = liquidity_scorer or LiquidityScorer()
@@ -55,7 +54,7 @@ class TradeListGenerator:
         opt_result: OptimisationResult,
         portfolio_value_inr: float,
         securities_master: pd.DataFrame,
-        current_holdings: Optional[dict[str, float]] = None,
+        current_holdings: dict[str, float] | None = None,
     ) -> list[Trade]:
         """
         Convert asset-class trade weights into security-level trades.

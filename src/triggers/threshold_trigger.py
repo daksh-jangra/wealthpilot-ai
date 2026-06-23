@@ -2,22 +2,19 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Optional
-
+from src.monitoring.drift_calculator import DriftResult, DriftSeverity
 from src.triggers.trigger_evaluator import (
     TriggerEvaluator,
     TriggerEvent,
     TriggerType,
 )
-from src.monitoring.drift_calculator import DriftResult, DriftSeverity
 
 
 class ThresholdTrigger(TriggerEvaluator):
     """Fires when asset-class drift exceeds the portfolio's drift band."""
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
-        drift_result: Optional[DriftResult] = context.get("drift_result")
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
+        drift_result: DriftResult | None = context.get("drift_result")
         if drift_result is None or drift_result.severity == DriftSeverity.NONE:
             return None
 
@@ -49,7 +46,7 @@ class ConcentrationTrigger(TriggerEvaluator):
     SECTOR_LIMIT = 0.35
     ISSUER_LIMIT = 0.10
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         sector_weights: dict[str, float] = context.get("sector_weights", {})
         issuer_weights: dict[str, float] = context.get("issuer_weights", {})
 
@@ -80,7 +77,7 @@ class FactorExposureTrigger(TriggerEvaluator):
 
     STD_THRESHOLD = 1.5
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         factor_tilts: dict[str, float] = context.get("factor_tilts", {})
         if not factor_tilts:
             return None

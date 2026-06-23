@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+
 import numpy as np
 
 
@@ -26,7 +26,7 @@ class ConstraintManager:
         self,
         turnover_budget: float = 0.20,
         min_trade_size_inr: float = 1_000,
-        sector_limits: Optional[dict[str, float]] = None,
+        sector_limits: dict[str, float] | None = None,
         issuer_limit: float = 0.10,
         international_equity_limit: float = 0.25,
     ):
@@ -50,8 +50,8 @@ class ConstraintManager:
         self,
         post_trade_weights: np.ndarray,
         trade_weights: np.ndarray,
-        sector_weights: Optional[dict[str, float]] = None,
-        issuer_weights: Optional[dict[str, float]] = None,
+        sector_weights: dict[str, float] | None = None,
+        issuer_weights: dict[str, float] | None = None,
         portfolio_value_inr: float = 1_000_000,
     ) -> list[ConstraintViolation]:
         """Return list of constraint violations for a proposed trade."""

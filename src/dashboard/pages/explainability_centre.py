@@ -1,8 +1,8 @@
 """Explainability Centre: browse explanations, SHAP plots, counterfactuals."""
 
-import streamlit as st
-import plotly.graph_objects as go
 import numpy as np
+import plotly.graph_objects as go
+import streamlit as st
 
 
 def render(data: dict) -> None:
@@ -183,4 +183,4 @@ def _render_shap_waterfall(drift_pct: float) -> None:
         ],
     )
     st.plotly_chart(fig, use_container_width=True)
-    st.caption(f"Red bars increase rebalancing probability; blue bars decrease it.")
+    st.caption("Red bars increase rebalancing probability; blue bars decrease it.")

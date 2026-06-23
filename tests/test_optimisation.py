@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from src.optimisation.constraint_manager import ConstraintManager
 from src.optimisation.cost_estimator import CostEstimator
 from src.optimisation.liquidity_scorer import LiquidityScorer
-from src.optimisation.constraint_manager import ConstraintManager
 from src.optimisation.trade_list_generator import TradeListGenerator
 
 
@@ -168,7 +168,7 @@ def test_constraint_manager_sector_violation():
     reason="cvxpy not installed",
 )
 def test_trade_list_generator():
-    from src.optimisation.portfolio_optimiser import PortfolioOptimiser, OptimisationResult
+    from src.optimisation.portfolio_optimiser import PortfolioOptimiser
 
     current = np.array([0.45, 0.15, 0.15, 0.10, 0.07, 0.08])
     target = np.array([0.35, 0.15, 0.20, 0.10, 0.12, 0.08])

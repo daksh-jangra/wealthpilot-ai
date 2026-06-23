@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import random
 from datetime import datetime
-from typing import Optional
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 
 
 class ComplianceAuditor:

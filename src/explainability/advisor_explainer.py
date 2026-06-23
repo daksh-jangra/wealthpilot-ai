@@ -1,6 +1,7 @@
 """Advisor-level explanation builder: quantitative, with strategy alternatives."""
 
 from __future__ import annotations
+
 from src.explainability.explanation_generator import ExplanationGenerator, ExplanationOutput
 
 

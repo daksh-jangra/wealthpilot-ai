@@ -1,9 +1,10 @@
 """Tests for override system: intervention classification, capture, kill switch."""
 
 import pytest
+
 from src.override.intervention_classifier import InterventionClassifier, InterventionLevel
-from src.override.override_capture import OverrideCapture
 from src.override.kill_switch import KillSwitch
+from src.override.override_capture import OverrideCapture
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+
 import numpy as np
 import pandas as pd
 
@@ -30,10 +30,10 @@ class LIMEExplanation:
 class LIMEIntegration:
     """Local Interpretable Model-Agnostic Explanations for rebalancing decisions."""
 
-    def __init__(self, trainer: Optional[SurrogateModelTrainer] = None):
+    def __init__(self, trainer: SurrogateModelTrainer | None = None):
         self.trainer = trainer or SurrogateModelTrainer()
-        self._explainer: Optional[object] = None
-        self._X_train: Optional[pd.DataFrame] = None
+        self._explainer: object | None = None
+        self._X_train: pd.DataFrame | None = None
 
     def _ensure_ready(self) -> None:
         if not LIME_AVAILABLE:

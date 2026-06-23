@@ -6,7 +6,6 @@ import pytest
 pytest.importorskip("cvxpy")
 
 from src.optimisation.portfolio_optimiser import PortfolioOptimiser
-from src.optimisation.constraint_manager import ConstraintManager
 
 
 @pytest.fixture

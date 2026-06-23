@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-from typing import Optional
 import pandas as pd
-import json
 
 
 class RegulatoryReporter:
@@ -20,8 +17,8 @@ class RegulatoryReporter:
     def generate_transaction_report(
         self,
         decision_log: list[dict],
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
     ) -> pd.DataFrame:
         """Complete transaction history with decision rationale."""
         rows = []
@@ -77,45 +74,45 @@ class RegulatoryReporter:
         """Structured audit trail for a single algorithmic decision."""
         meta = decision.get("decision_metadata", {})
         lines = [
-            f"ALGORITHMIC TRADING AUDIT TRAIL",
-            f"=" * 60,
+            "ALGORITHMIC TRADING AUDIT TRAIL",
+            "=" * 60,
             f"Decision ID: {decision.get('decision_id', 'UNKNOWN')}",
             f"Timestamp: {meta.get('timestamp', 'UNKNOWN')}",
             f"Portfolio ID: {meta.get('portfolio_id', 'UNKNOWN')}",
             f"Risk Category: {meta.get('risk_category', 'UNKNOWN')}",
-            f"",
-            f"TRIGGER ANALYSIS",
-            f"-" * 40,
+            "",
+            "TRIGGER ANALYSIS",
+            "-" * 40,
             f"Primary Trigger: {meta.get('trigger_type', 'UNKNOWN')}",
             f"Priority: {meta.get('trigger_priority', 'UNKNOWN')}",
             f"Max Drift: {meta.get('max_drift_pct', 0):.2f}%",
             f"Breaching Asset Classes: {meta.get('breaching_asset_classes', [])}",
-            f"",
-            f"OPTIMISATION RESULT",
-            f"-" * 40,
+            "",
+            "OPTIMISATION RESULT",
+            "-" * 40,
             f"Status: {decision.get('optimisation_result', {}).status if hasattr(decision.get('optimisation_result', {}), 'status') else 'completed'}",
             f"Tracking Error Before: {meta.get('tracking_error_before', 0):.3f}%",
             f"Tracking Error After: {meta.get('tracking_error_after', 0):.3f}%",
             f"Turnover: {meta.get('turnover', 0):.2%}",
-            f"",
-            f"CONSTRAINT SATISFACTION",
-            f"-" * 40,
+            "",
+            "CONSTRAINT SATISFACTION",
+            "-" * 40,
             f"Hard Violations: {meta.get('constraint_checks', {}).get('hard', 0)}",
             f"Soft Violations: {meta.get('constraint_checks', {}).get('soft', 0)}",
-            f"",
-            f"COST & TAX",
-            f"-" * 40,
+            "",
+            "COST & TAX",
+            "-" * 40,
             f"Total Cost: INR {meta.get('total_cost_inr', 0):,.0f}",
             f"Tax Impact: INR {meta.get('tax_impact_inr', 0):,.0f}",
-            f"",
-            f"MODEL PROVENANCE",
-            f"-" * 40,
+            "",
+            "MODEL PROVENANCE",
+            "-" * 40,
             f"Model Version: {meta.get('model_version', '1.0.0')}",
-            f"Agent Framework: CrewAI + Claude claude-sonnet-4-6",
-            f"Optimiser: CVXPY/OSQP",
-            f"",
-            f"OVERRIDE HISTORY",
-            f"-" * 40,
+            "Agent Framework: CrewAI + Claude claude-sonnet-4-6",
+            "Optimiser: CVXPY/OSQP",
+            "",
+            "OVERRIDE HISTORY",
+            "-" * 40,
             f"Overrides: {len(meta.get('override_history', []))}",
         ]
         return "\n".join(lines)

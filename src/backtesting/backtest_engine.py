@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Callable
 
 import numpy as np
 import pandas as pd
-from loguru import logger
 
-from src.monitoring.drift_calculator import DriftCalculator, DriftSeverity
+from src.monitoring.drift_calculator import DriftCalculator
 from src.optimisation.portfolio_optimiser import PortfolioOptimiser
 
 TARGET_ALLOCATIONS = {
@@ -37,7 +35,7 @@ class DailyPortfolioState:
     value_inr: float
     rebalanced_today: bool
     cost_inr: float = 0.0
-    trigger_type: Optional[str] = None
+    trigger_type: str | None = None
 
 
 @dataclass
@@ -85,7 +83,7 @@ class BacktestEngine:
         initial_weights: np.ndarray,
         initial_value_inr: float,
         strategy: str = "agent",
-        quarterly_months: Optional[set] = None,
+        quarterly_months: set | None = None,
     ) -> BacktestResult:
         """
         Replay the full backtest for one portfolio.
@@ -104,7 +102,7 @@ class BacktestEngine:
         daily_returns = []
         quarter_months = quarterly_months or {1, 4, 7, 10}
 
-        last_rebalance_date: Optional[date] = None
+        last_rebalance_date: date | None = None
 
         for i, dt in enumerate(dates):
             returns_today = self.market_returns.iloc[i].values
@@ -180,7 +178,7 @@ class BacktestEngine:
         band: float,
         dt: date,
         quarter_months: set,
-        last_rebalance: Optional[date],
+        last_rebalance: date | None,
     ) -> bool:
         max_drift = float(np.abs(weights - target).max())
 

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Optional
 
 from src.triggers.trigger_evaluator import TriggerEvaluator, TriggerEvent, TriggerType
 
@@ -14,8 +13,8 @@ class MarketCrashTrigger(TriggerEvaluator):
     def __init__(self, crash_threshold: float = 0.10):
         self.crash_threshold = crash_threshold
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
-        drawdown: Optional[float] = context.get("benchmark_drawdown_from_high")
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
+        drawdown: float | None = context.get("benchmark_drawdown_from_high")
         if drawdown is None or abs(drawdown) < self.crash_threshold:
             return None
         return self._make_event(
@@ -32,7 +31,7 @@ class MarketCrashTrigger(TriggerEvaluator):
 class RegulatoryChangeTrigger(TriggerEvaluator):
     """Fires when a new SEBI circular affects this portfolio's allocations."""
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         regulatory_events: list[dict] = context.get("regulatory_events", [])
         affected = [
             e for e in regulatory_events if portfolio_id in e.get("affected_portfolios", [])
@@ -57,7 +56,7 @@ class ClientLifeEventTrigger(TriggerEvaluator):
 
     SIGNIFICANT_FLOW_THRESHOLD = 500_000  # INR 5 lakh
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         life_events: list[dict] = context.get("client_life_events", [])
         client_events = [e for e in life_events if e.get("portfolio_id") == portfolio_id]
         if not client_events:
@@ -82,7 +81,7 @@ class TaxHarvestingTrigger(TriggerEvaluator):
     WINDOW_START_DAY = 1
     WINDOW_END_DAY = 31
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         today = context.get("date", date.today())
         if isinstance(today, datetime):
             today = today.date()
@@ -110,7 +109,7 @@ class CashFlowTrigger(TriggerEvaluator):
 
     MIN_INVESTABLE_INR = 5_000
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         cash_available = context.get("uninvested_cash_inr", 0.0)
         sip_inflow = context.get("sip_inflow_inr", 0.0)
         total_investable = cash_available + sip_inflow

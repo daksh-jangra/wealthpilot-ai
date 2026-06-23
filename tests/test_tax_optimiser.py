@@ -1,10 +1,11 @@
 """Tests for TaxLotManager and TaxOptimiser."""
 
-import pytest
 from datetime import date, timedelta
-import pandas as pd
 
-from src.optimisation.tax_optimiser import TaxLotManager, TaxOptimiser, HOLDING_PERIOD_EQUITY_DAYS
+import pandas as pd
+import pytest
+
+from src.optimisation.tax_optimiser import HOLDING_PERIOD_EQUITY_DAYS, TaxLotManager, TaxOptimiser
 
 
 def _make_lot_df():
@@ -100,8 +101,6 @@ def test_select_lots_fifo(lot_manager):
 
 def test_stcg_rate_applied(lot_manager):
     """Short-term gains should use 20% rate."""
-    lots = lot_manager.get_portfolio_lots("WP000001")
-    short_term_lot = lots.iloc[1]  # 100 days ago, cost 110, price 100 (at loss)
     selected = lot_manager.select_lots_for_sale(
         portfolio_id="WP000001",
         security_id="IEQ001",

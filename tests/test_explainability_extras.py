@@ -1,12 +1,13 @@
 """Tests for SHAP, LIME, counterfactual, advisor, and compliance explainers."""
 
-import numpy as np
-import pytest
 from unittest.mock import MagicMock, patch
 
-from src.explainability.counterfactual_generator import CounterfactualGenerator
+import numpy as np
+import pytest
+
 from src.explainability.advisor_explainer import AdvisorExplainer
 from src.explainability.compliance_explainer import ComplianceExplainer
+from src.explainability.counterfactual_generator import CounterfactualGenerator
 from src.explainability.explanation_generator import ExplanationGenerator, ExplanationOutput
 
 SAMPLE_FEATURES = {
@@ -218,7 +219,7 @@ def test_shap_format_compliance():
 
 @pytest.mark.skipif(not _shap_available(), reason="shap/xgboost not available")
 def test_surrogate_model_trainer_generates_data():
-    from src.explainability.shap_integration import SurrogateModelTrainer, SHAP_AVAILABLE
+    from src.explainability.shap_integration import SHAP_AVAILABLE, SurrogateModelTrainer
 
     if not SHAP_AVAILABLE:
         pytest.skip("xgboost not available")

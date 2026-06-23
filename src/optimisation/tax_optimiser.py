@@ -4,9 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date, timedelta
-from typing import Optional
+
 import pandas as pd
-import numpy as np
 
 TAX_RATE_LTCG_EQUITY = 0.125  # 12.5% post-2024 budget (grandfathering pre-2018)
 TAX_RATE_STCG_EQUITY = 0.20  # 20% post-2024 budget
@@ -38,7 +37,7 @@ class HarvestOpportunity:
     asset_class: str
     unrealized_loss_inr: float
     quantity: float
-    substitute_security_id: Optional[str]
+    substitute_security_id: str | None
     estimated_tax_saving_inr: float
 
 

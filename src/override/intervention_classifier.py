@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class InterventionLevel(str, Enum):
@@ -20,7 +19,7 @@ class InterventionDecision:
     trade_impact_pct: float
     decision_confidence: float
     reason: str
-    waiting_period_hours: Optional[int] = None
+    waiting_period_hours: int | None = None
 
 
 class InterventionClassifier:

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Optional
 
 from src.triggers.trigger_evaluator import TriggerEvaluator, TriggerEvent, TriggerType
 
@@ -23,7 +22,7 @@ def _next_business_day(d: date) -> date:
 class MonthlyCalendarTrigger(TriggerEvaluator):
     """Fires on the first business day of every month."""
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         today = context.get("date", date.today())
         if isinstance(today, datetime):
             today = today.date()
@@ -42,7 +41,7 @@ class QuarterlyCalendarTrigger(TriggerEvaluator):
 
     QUARTER_MONTHS = {1, 4, 7, 10}
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         today = context.get("date", date.today())
         if isinstance(today, datetime):
             today = today.date()
@@ -71,12 +70,12 @@ class QuarterlyCalendarTrigger(TriggerEvaluator):
 class AnnualCalendarTrigger(TriggerEvaluator):
     """Fires on the client's annual review anniversary (or start of April FY)."""
 
-    def evaluate(self, portfolio_id: str, context: dict) -> Optional[TriggerEvent]:
+    def evaluate(self, portfolio_id: str, context: dict) -> TriggerEvent | None:
         today = context.get("date", date.today())
         if isinstance(today, datetime):
             today = today.date()
 
-        anniversary: Optional[date] = context.get("client_anniversary")
+        anniversary: date | None = context.get("client_anniversary")
         if anniversary is None:
             # Default: April 1 (Indian FY start)
             anniversary = date(today.year, 4, 1)

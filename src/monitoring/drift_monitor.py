@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import time
 import heapq
+import time
 from datetime import datetime
-from typing import Optional
 
 import pandas as pd
 from loguru import logger
@@ -22,12 +21,12 @@ class DriftMonitor:
 
     def __init__(
         self,
-        calculator: Optional[DriftCalculator] = None,
-        threshold_manager: Optional[ThresholdManager] = None,
+        calculator: DriftCalculator | None = None,
+        threshold_manager: ThresholdManager | None = None,
     ):
         self.calculator = calculator or DriftCalculator()
         self.threshold_manager = threshold_manager or ThresholdManager()
-        self._last_scan_time: Optional[datetime] = None
+        self._last_scan_time: datetime | None = None
         self._priority_queue: list[tuple] = []
         self._latest_results: list[DriftResult] = []
 
@@ -75,7 +74,7 @@ class DriftMonitor:
 
         return summary
 
-    def get_next_portfolio(self) -> Optional[DriftResult]:
+    def get_next_portfolio(self) -> DriftResult | None:
         """Pop the highest-priority portfolio from the queue."""
         if not self._priority_queue:
             return None

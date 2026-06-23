@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
 from dataclasses import dataclass
 from datetime import date, timedelta
-from typing import Optional
+
+import numpy as np
+import pandas as pd
 
 from src.data.client_profile_generator import ClientProfileGenerator
 
@@ -60,7 +60,7 @@ class PortfolioGenerator:
 
     def generate_current_allocations(
         self,
-        client_profiles: Optional[pd.DataFrame] = None,
+        client_profiles: pd.DataFrame | None = None,
         drift_noise_std: float = 0.04,
     ) -> pd.DataFrame:
         """
@@ -90,7 +90,7 @@ class PortfolioGenerator:
 
     def generate_portfolio_values(
         self,
-        client_profiles: Optional[pd.DataFrame] = None,
+        client_profiles: pd.DataFrame | None = None,
     ) -> pd.Series:
         """Return portfolio total value in INR for each client."""
         if client_profiles is None:
@@ -105,8 +105,8 @@ class PortfolioGenerator:
 
     def generate_tax_lots(
         self,
-        client_profiles: Optional[pd.DataFrame] = None,
-        current_prices: Optional[pd.Series] = None,
+        client_profiles: pd.DataFrame | None = None,
+        current_prices: pd.Series | None = None,
         n_lots_per_holding: int = 3,
     ) -> pd.DataFrame:
         """Generate tax lots for every portfolio holding."""

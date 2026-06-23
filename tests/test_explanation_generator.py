@@ -1,11 +1,12 @@
 """Tests for ExplanationGenerator — template selection, quality checks, mocked LLM."""
 
-import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-from src.explainability.explanation_generator import ExplanationGenerator, ExplanationOutput
-from src.explainability.client_explainer import ClientExplainer
+import pytest
+
 from src.compliance.explainability_scorecard import ExplainabilityScorecard
+from src.explainability.client_explainer import ClientExplainer
+from src.explainability.explanation_generator import ExplanationGenerator, ExplanationOutput
 
 SAMPLE_METADATA = {
     "portfolio_id": "WP000001",

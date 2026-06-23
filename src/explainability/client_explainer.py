@@ -1,6 +1,7 @@
 """Client-level explanation builder: plain language, Grade 8, goal-linked."""
 
 from __future__ import annotations
+
 from src.explainability.explanation_generator import ExplanationGenerator, ExplanationOutput
 
 

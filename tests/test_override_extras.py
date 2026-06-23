@@ -1,7 +1,6 @@
 """Tests for EscalationManager."""
 
-import pytest
-from src.override.escalation_manager import EscalationManager, EscalationBriefing
+from src.override.escalation_manager import EscalationBriefing, EscalationManager
 
 SAMPLE_METADATA = {
     "trigger_type": "threshold_asset_class",

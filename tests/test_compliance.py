@@ -1,13 +1,10 @@
 """Tests for compliance layer: auditor, regulatory reporter, bias detector, scorecard."""
 
-import numpy as np
-import pandas as pd
-import pytest
 
-from src.compliance.compliance_auditor import ComplianceAuditor
-from src.compliance.regulatory_reporter import RegulatoryReporter
 from src.compliance.bias_detector import BiasDetector
+from src.compliance.compliance_auditor import ComplianceAuditor
 from src.compliance.explainability_scorecard import ExplainabilityScorecard
+from src.compliance.regulatory_reporter import RegulatoryReporter
 
 SAMPLE_DECISIONS = [
     {

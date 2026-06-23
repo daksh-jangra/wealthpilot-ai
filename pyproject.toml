@@ -54,8 +54,14 @@ target-version = ["py310", "py311"]
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP"]
-ignore = ["E501"]
+ignore = [
+    "E501",   # line too long (handled by black)
+    "N806",   # uppercase variable in function (scientific convention: X, L, dW)
+    "N803",   # uppercase argument name (scientific convention: X)
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

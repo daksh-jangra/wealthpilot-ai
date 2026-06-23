@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 
 @dataclass
@@ -80,9 +79,9 @@ class EscalationManager:
         ]
 
         questions = [
-            f"Should the international equity limit be temporarily relaxed for this client?",
+            "Should the international equity limit be temporarily relaxed for this client?",
             f"Is there a client-specific reason to delay rebalancing despite {drift:.1f}% drift?",
-            f"Should the trade be split across multiple days to reduce market impact?",
+            "Should the trade be split across multiple days to reduce market impact?",
         ]
 
         briefing = EscalationBriefing(

@@ -1,10 +1,10 @@
 """End-to-end integration tests: drift detection → trigger → optimisation → explanation."""
 
-import numpy as np
-import pandas as pd
-import pytest
 from datetime import date
 from unittest.mock import MagicMock
+
+import numpy as np
+import pytest
 
 
 # ── Data layer ──────────────────────────────────────────────────────────────────
@@ -28,8 +28,8 @@ def test_market_data_generates_252_days():
 
 
 def test_portfolio_values_generated():
-    from src.data.portfolio_generator import PortfolioGenerator
     from src.data.client_profile_generator import ClientProfileGenerator
+    from src.data.portfolio_generator import PortfolioGenerator
 
     gen = PortfolioGenerator(seed=42)
     clients = ClientProfileGenerator(seed=42).generate_all()
@@ -42,8 +42,9 @@ def test_portfolio_values_generated():
 def test_drift_monitor_scan_performance():
     """50,000 portfolios should be scanned in <30 seconds."""
     import time
-    from src.data.portfolio_generator import PortfolioGenerator
+
     from src.data.client_profile_generator import ClientProfileGenerator
+    from src.data.portfolio_generator import PortfolioGenerator
     from src.monitoring.drift_monitor import DriftMonitor
 
     gen = PortfolioGenerator(seed=42)
@@ -62,8 +63,8 @@ def test_drift_monitor_scan_performance():
 
 # ── Trigger layer ────────────────────────────────────────────────────────────────
 def test_trigger_pipeline_for_drifted_portfolio():
-    from src.triggers.trigger_consolidator import TriggerConsolidator
     from src.monitoring.drift_calculator import DriftResult, DriftSeverity
+    from src.triggers.trigger_consolidator import TriggerConsolidator
 
     drift = DriftResult(
         portfolio_id="WP000001",

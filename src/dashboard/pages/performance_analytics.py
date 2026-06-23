@@ -1,10 +1,10 @@
 """Performance Analytics page: backtest results and strategy comparison."""
 
-import streamlit as st
-import plotly.express as px
-import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import streamlit as st
 
 
 def render(data: dict) -> None:
@@ -61,7 +61,7 @@ def render(data: dict) -> None:
     for col, (metric, result) in zip(cols, scorecard.items()):
         icon = "✅" if result["agent_wins"] else "❌"
         col.metric(
-            label=metric,
+            label=f"{icon} {metric}",
             value=f"{result['agent']:.3f}",
             delta=f"{result['agent'] - result['legacy']:.3f} vs legacy",
         )

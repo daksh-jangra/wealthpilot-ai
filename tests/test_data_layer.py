@@ -1,11 +1,10 @@
 """Tests for data generation layer."""
 
 import numpy as np
-import pandas as pd
 import pytest
 
-from src.data.market_data_simulator import MarketDataSimulator, MarketParameters
 from src.data.client_profile_generator import ClientProfileGenerator
+from src.data.market_data_simulator import MarketDataSimulator, MarketParameters
 from src.data.portfolio_generator import PortfolioGenerator
 
 
@@ -179,8 +178,9 @@ def test_portfolio_generator_tax_lots_non_empty():
 
 
 def test_tax_lot_dataclass_properties():
-    from src.data.portfolio_generator import TaxLot
     from datetime import date, timedelta
+
+    from src.data.portfolio_generator import TaxLot
 
     old_date = date.today() - timedelta(days=400)
     lot = TaxLot(

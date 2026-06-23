@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import yaml
 from pathlib import Path
-from typing import Optional
+
+import yaml
 
 BASE_DRIFT_BANDS = {
     "ultra_conservative": 0.020,
@@ -23,7 +23,7 @@ class ThresholdManager:
     bands with client-specific overlays (ESG screens, restrictions, etc.).
     """
 
-    def __init__(self, config_path: Optional[Path] = None):
+    def __init__(self, config_path: Path | None = None):
         self._base_bands = dict(BASE_DRIFT_BANDS)
         self._client_overrides: dict[str, float] = {}
         if config_path and config_path.exists():
@@ -37,7 +37,7 @@ class ThresholdManager:
             if k in self._base_bands:
                 self._base_bands[k] = float(v)
 
-    def get_drift_band(self, risk_category: str, client_id: Optional[str] = None) -> float:
+    def get_drift_band(self, risk_category: str, client_id: str | None = None) -> float:
         """Return the effective drift band for a client."""
         base = self._base_bands.get(risk_category, 0.030)
         if client_id and client_id in self._client_overrides:

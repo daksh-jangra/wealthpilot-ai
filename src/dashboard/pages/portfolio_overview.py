@@ -1,9 +1,7 @@
 """Portfolio Overview page: drift heatmap across 50,000 portfolios."""
 
-import streamlit as st
 import plotly.express as px
-import plotly.graph_objects as go
-import pandas as pd
+import streamlit as st
 
 
 def render(data: dict) -> None:

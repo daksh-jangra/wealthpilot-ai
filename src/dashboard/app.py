@@ -13,17 +13,14 @@ st.set_page_config(
 # Lazy-load heavy modules
 @st.cache_resource(show_spinner=False)
 def load_data():
-    import numpy as np
-    import pandas as pd
-    import sys
     import os
+    import sys
 
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-    from src.data.portfolio_generator import PortfolioGenerator
     from src.data.client_profile_generator import ClientProfileGenerator
     from src.data.market_data_simulator import MarketDataSimulator
-    from src.monitoring.drift_calculator import DriftCalculator
+    from src.data.portfolio_generator import PortfolioGenerator
     from src.monitoring.drift_monitor import DriftMonitor
 
     # Generate synthetic data (cached on first run)

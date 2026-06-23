@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from loguru import logger
 
 from src.backtesting.backtest_engine import BacktestEngine, BacktestResult
@@ -39,7 +39,7 @@ class StrategyComparator:
             )
 
         summaries = {s: self.analyser.summarise(r) for s, r in results.items()}
-        comparison_df = self.analyser.compare(list(results.values()))
+        self.analyser.compare(list(results.values()))
 
         significance = self.analyser.statistical_significance(
             results["agent"], results["legacy_quarterly"]
