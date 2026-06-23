@@ -1,0 +1,32 @@
+app:
+  name: "WealthPilot AI - Portfolio Rebalancing Agent"
+  version: "1.0.0"
+  environment: "development"
+
+data:
+  num_portfolios: 50000
+  num_securities: 500
+  simulation_days: 252
+  random_seed: 42
+
+monitoring:
+  scan_interval_minutes: 5
+  real_time_during_market_hours: true
+  market_open: "09:15"
+  market_close: "15:30"
+  timezone: "Asia/Kolkata"
+
+logging:
+  level: "INFO"
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name} | {message}"
+  rotation: "100 MB"
+
+agents:
+  model: "claude-sonnet-4-6"
+  max_retry_compliance: 3
+  agent_verbose: false
+
+dashboard:
+  port: 8501
+  theme: "light"
+  refresh_interval_seconds: 30

@@ -1,0 +1,93 @@
+risk_categories:
+  ultra_conservative:
+    id: 1
+    name: "Ultra-Conservative"
+    num_portfolios: 5000
+    target_allocation:
+      indian_equity: 0.10
+      international_equity: 0.05
+      indian_fixed_income: 0.45
+      international_fixed_income: 0.15
+      alternatives: 0.10
+      cash: 0.15
+    drift_band: 0.020
+    description: "Capital preservation focused, minimal equity exposure"
+
+  conservative:
+    id: 2
+    name: "Conservative"
+    num_portfolios: 12000
+    target_allocation:
+      indian_equity: 0.20
+      international_equity: 0.10
+      indian_fixed_income: 0.35
+      international_fixed_income: 0.10
+      alternatives: 0.12
+      cash: 0.13
+    drift_band: 0.025
+    description: "Income-focused with modest growth allocation"
+
+  balanced:
+    id: 3
+    name: "Balanced"
+    num_portfolios: 18000
+    target_allocation:
+      indian_equity: 0.35
+      international_equity: 0.15
+      indian_fixed_income: 0.20
+      international_fixed_income: 0.10
+      alternatives: 0.12
+      cash: 0.08
+    drift_band: 0.030
+    description: "Equal emphasis on growth and income"
+
+  aggressive:
+    id: 4
+    name: "Aggressive"
+    num_portfolios: 10000
+    target_allocation:
+      indian_equity: 0.50
+      international_equity: 0.20
+      indian_fixed_income: 0.10
+      international_fixed_income: 0.05
+      alternatives: 0.10
+      cash: 0.05
+    drift_band: 0.040
+    description: "Growth-focused with high equity allocation"
+
+  ultra_aggressive:
+    id: 5
+    name: "Ultra-Aggressive"
+    num_portfolios: 5000
+    target_allocation:
+      indian_equity: 0.60
+      international_equity: 0.25
+      indian_fixed_income: 0.05
+      international_fixed_income: 0.00
+      alternatives: 0.07
+      cash: 0.03
+    drift_band: 0.050
+    description: "Maximum growth, high risk tolerance"
+
+asset_classes:
+  - indian_equity
+  - international_equity
+  - indian_fixed_income
+  - international_fixed_income
+  - alternatives
+  - cash
+
+sector_limits:
+  financials: 0.35
+  technology: 0.30
+  energy: 0.25
+  healthcare: 0.25
+  consumer: 0.25
+  industrials: 0.20
+  materials: 0.15
+  utilities: 0.15
+  real_estate: 0.15
+  default: 0.20
+
+single_issuer_limit: 0.10
+international_equity_retail_limit: 0.25

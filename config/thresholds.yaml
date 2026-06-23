@@ -1,0 +1,54 @@
+drift_thresholds:
+  critical_multiplier: 2.0
+  high_multiplier: 1.5
+  medium_multiplier: 1.0
+
+trigger_thresholds:
+  market_crash_pct: -0.10
+  vix_kill_switch: 40.0
+  factor_drift_std: 1.5
+
+calendar_schedule:
+  monthly_review_day: 1
+  quarterly_months: [1, 4, 7, 10]
+  annual_review_month: 1
+
+tax_harvesting:
+  window_start_month: 3
+  window_start_day: 1
+  window_end_month: 3
+  window_end_day: 31
+  min_harvestable_loss_inr: 5000
+
+intervention_thresholds:
+  informational_max_trade_pct: 0.05
+  advisory_max_trade_pct: 0.15
+  approval_required_above: 0.15
+  min_confidence_advisory: 0.75
+
+optimisation:
+  default_turnover_budget: 0.20
+  min_trade_size_inr: 1000
+  max_sector_concentration: 0.35
+  transaction_cost_bps: 15
+  market_impact_coefficient: 0.10
+  max_optimisation_iterations: 3
+
+performance:
+  portfolio_scan_target_seconds: 30
+  single_portfolio_optimisation_seconds: 2
+  explanation_generation_seconds: 5
+  batch_rebalancing_per_hour: 1000
+
+llm:
+  client_temperature: 0.45
+  advisor_temperature: 0.35
+  compliance_temperature: 0.15
+  max_tokens_client: 400
+  max_tokens_advisor: 800
+  max_tokens_compliance: 1500
+
+backtesting:
+  trading_days_per_year: 252
+  risk_free_rate: 0.065
+  benchmark_index: "NIFTY_50"

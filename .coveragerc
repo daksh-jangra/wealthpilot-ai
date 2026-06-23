@@ -1,0 +1,7 @@
+[run]
+omit =
+    src/dashboard/*
+
+[report]
+omit =
+    src/dashboard/*
